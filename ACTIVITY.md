@@ -9,9 +9,9 @@
 TEXT
 
 ### Elvira
-LINK
+- https://github.com/doda2025-team14/operation/pull/3
 
-TEXT
+I have worked on A1 and have contributed to the docker compose operation and documenting how to start the application (subquestion F7).
 
 ### Conall
 - https://github.com/doda2025-team14/app/pull/10
