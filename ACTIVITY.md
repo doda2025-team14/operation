@@ -14,7 +14,10 @@ LINK
 TEXT
 
 ### Conall
-LINK
+- https://github.com/doda2025-team14/app/pull/10
+- https://github.com/doda2025-team14/model-service/pull/12
+
+Set up GitHub org. Worked on A1F8. Created auto updating versioning for app & model-service based on single source of truth in the pom.xml.
 
 TEXT
 
