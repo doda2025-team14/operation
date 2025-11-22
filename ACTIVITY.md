@@ -6,7 +6,7 @@
 - https://github.com/doda2025-team14/app/pull/7
 - https://github.com/doda2025-team14/model-service/pull/9
 
-TEXT
+This week I set up the project template and created the dockerfiles used to create Docker images. They utilize stages to minimize the size of the final image. Additionally, they support configuring the port and the model host url using environment variables. Lastly, they are able to be built using both the amd64 and arm64 architectures.
 
 ### Elvira
 - https://github.com/doda2025-team14/operation/pull/3
