@@ -28,9 +28,10 @@ TEXT
 Worked on assignment 1 F1 and F2. Created issues and GitHub organization project. Setup library to follow Maven project structure and added the corresponding pom.xml. Modified app's pom.xml to depend on library and made hello world controller display library version. Created a GitHub workflow to release the library automatically to GitHub package registry.
 
 ### Jeffrey
-LINK
+- https://github.com/doda2025-team14/lib-version/pull/5
+- https://github.com/doda2025-team14/model-service/pull/13
 
-TEXT
+Worked on assignment 1 F11. Created a pipeline and script that automates the creation of prerelease timestamps. Contributed a little to F4 so that the pipeline works with multiple architectures. I also reviewed 3 different PR.
 
 ### Alessandro
 LINK
