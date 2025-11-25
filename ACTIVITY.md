@@ -34,13 +34,9 @@ Worked on assignment 1 F1 and F2. Created issues and GitHub organization project
 Worked on assignment 1 F11. Created a pipeline and script that automates the creation of prerelease timestamps. Contributed a little to F4 so that the pipeline works with multiple architectures. I also reviewed 3 different PR.
 
 ### Alessandro
-LINK
+- https://github.com/doda2025-team14/model-service/pull/10
 
-TEXT
-
-
-
-
+Worked on assignment 1, F9 and F10. In model-service, I implemented a workflow that trains the model and publishes it as a release upon code changes. To complement this, I enhanced the Flask serving application to automatically detect, download, and hot-reload these new model versions from GitHub.
 
 ## Week 3
 
