@@ -66,12 +66,10 @@ LINK
 TEXT
 
 ### Alessandro
-LINK
 
-TEXT
+https://github.com/doda2025-team14/operation/pull/32
 
-
-
+I configured the necessary kernel modules (overlay, br_netfilter) and enabled IPv4 forwarding to ensure proper network traffic routing for Kubernetes. For I implemented a dynamic /etc/hosts generation using Jinja2 templates, allowing the cluster to automatically resolve hostnames for the controller and any number of worker nodes defined in the Vagrantfile.
 
 
 ## Week 4
