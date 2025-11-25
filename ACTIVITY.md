@@ -60,9 +60,9 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+https://github.com/doda2025-team14/operation/pull/4
 
-WTEXT
+Worked on assignment 2 steps 1-5. Created initial Vagrantfile with the necessary configurations for memory, CPU, and networking. Made VMs be provisioned automatically on creation via Ansible with playbooks. Added general playbook tasks for registering public SSH keys for each VM in the cluster and disabled swap in all VMs for compatability with Kubernetes.
 
 ### Jeffrey
 LINK
