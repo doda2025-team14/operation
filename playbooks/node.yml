@@ -1,6 +1,0 @@
-- hosts: all
-  become: true
-  tasks:
-    - name: Dummy task to avoid failure
-      debug:
-        msg: "This is a placeholder task. Fill this playbook with real tasks later."
