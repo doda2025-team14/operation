@@ -20,9 +20,11 @@ Vagrant.configure("2") do |config|
     # Provision with Ansible
     ctrl.vm.provision "ansible" do |ansible|
       ansible.playbook = "playbooks/general.yml"
+      ansible.extra_vars = { num_workers: NUM_WORKERS }
     end
     ctrl.vm.provision "ansible" do |ansible|
       ansible.playbook = "playbooks/ctrl.yml"
+      ansible.extra_vars = { num_workers: NUM_WORKERS }
     end
   end
 
@@ -40,9 +42,11 @@ Vagrant.configure("2") do |config|
       # Provision with Ansible
       node.vm.provision "ansible" do |ansible|
         ansible.playbook = "playbooks/general.yml"
+        ansible.extra_vars = { num_workers: NUM_WORKERS }
       end
       node.vm.provision "ansible" do |ansible|
         ansible.playbook = "playbooks/node.yml"
+        ansible.extra_vars = { num_workers: NUM_WORKERS }
       end
     end
   end
