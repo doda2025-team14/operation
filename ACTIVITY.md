@@ -2,6 +2,8 @@
 
 ## Week 2
 
+Project board: https://github.com/orgs/doda2025-team14/projects/2
+
 ### Boris
 - https://github.com/doda2025-team14/app/pull/7
 - https://github.com/doda2025-team14/model-service/pull/9
@@ -39,6 +41,8 @@ Worked on assignment 1 F11. Created a pipeline and script that automates the cre
 Worked on assignment 1, F9 and F10. In model-service, I implemented a workflow that trains the model and publishes it as a release upon code changes. To complement this, I enhanced the Flask serving application to automatically detect, download, and hot-reload these new model versions from GitHub.
 
 ## Week 3
+
+Project board: https://github.com/orgs/doda2025-team14/projects/3
 
 ### Boris
 LINK
