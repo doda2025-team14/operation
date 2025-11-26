@@ -78,3 +78,31 @@
           {% for i in range(1, num_workers|int + 1) %}
           192.168.56.10{{ i }} node-{{ i }}
           {% endfor %}
+    
+    # Assingment 2: step 9
+    - name: Create /etc/apt/keyrings directory
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+        
+    - name: Download Kubernetes Release.key
+      get_url:
+        url: "https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key"
+        dest: /etc/apt/keyrings/kubernetes-release.key
+        mode: '0644'
+
+    - name: Create dearmored keyring
+      command: >
+        gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+        /etc/apt/keyrings/kubernetes-release.key
+      args:
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    
+    - name: Add Kubernetes APT repository
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /"
+ 
+    - name: Update repositories cache
+      ansible.builtin.apt:
+        update_cache: yes
