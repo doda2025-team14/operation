@@ -106,7 +106,8 @@
     - name: Update repositories cache
       ansible.builtin.apt:
         update_cache: yes
-
+    
+    # Assingment 2: step 10
     - name: Install containerd and Kubernetes tools
       ansible.builtin.apt:
         name:
@@ -115,4 +116,58 @@
           - kubeadm
           - kubelet
           - kubectl
+          
+    # Assingment 2: step 11
+    - name: Ensure /etc/containerd directory exists
+      file:
+        path: /etc/containerd
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
 
+    - name: Remove old containerd config
+      file:
+        path: /etc/containerd/config.toml
+        state: absent
+
+    - name: Create default containerd config
+      command: containerd config default
+      register: containerd_config
+      args:
+        creates: /etc/containerd/config.toml
+        
+
+    - name: Save containerd config to file
+      copy:
+        dest: /etc/containerd/config.toml
+        content: "{{ containerd_config.stdout }}"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Disable apparmor
+      ansible.builtin.lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: 'disable_apparmor = false'
+        line: disable_apparmor = true
+
+    - name: Set sandbox image
+      ansible.builtin.lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: 'sandbox_image = ".*"'
+        line: sandbox_image = "registry.k8s.io/pause:3.10"
+        
+    - name: Enable SystemdCgroup
+      ansible.builtin.lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: 'SystemdCgroup = false'
+        line: SystemdCgroup = true
+
+    - name: Restart containerd service to apply changes
+      ansible.builtin.service:
+        name: containerd
+        state: restarted
+
+
+    # Assingment 2: step 12
