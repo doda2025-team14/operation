@@ -106,3 +106,13 @@
     - name: Update repositories cache
       ansible.builtin.apt:
         update_cache: yes
+
+    - name: Install containerd and Kubernetes tools
+      ansible.builtin.apt:
+        name:
+          - containerd
+          - runc
+          - kubeadm
+          - kubelet
+          - kubectl
+
