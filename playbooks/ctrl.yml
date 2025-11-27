@@ -1,7 +1,110 @@
-- hosts: all
+- hosts: ctrl
   become: true
   tasks:
-    - name: Dummy task to avoid failure
-      debug:
-        msg: "This is a placeholder task. Fill this playbook with real tasks later."
+    # Assignment 2: Step 13
+    - name: Check if admin.conf exists
+      stat:
+        path: /etc/kubernetes/admin.conf
+      register: admin_conf_stat
+
+    # Init if admin.conf doesn't exist
+    - name: Initialize Kubernetes cluster with kubeadm
+      command: >
+        kubeadm init --apiserver-advertise-address=192.168.56.100
+                     --node-name ctrl
+                      --pod-network-cidr=10.244.0.0/16
+      when: admin_conf_stat.stat.exists == false
+
+    # Assignment 2: Step 14
+    - name: Create .kube directory
+      file:
+        path: /home/vagrant/.kube
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: '0755'
+
+    - name: Copy admin.conf to vagrant kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/vagrant/.kube/config
+        owner: vagrant
+        group: vagrant
+        mode: '0644'
+        remote_src: yes
+
+    - name: Copy admin.conf to host machine
+      fetch:
+        src: /etc/kubernetes/admin.conf
+        dest: ./admin.conf
+        flat: yes
         
+    # Assignment 2: Step 15
+    - name: Check if Flannel is already installed
+      shell: |
+        export KUBECONFIG=/home/vagrant/.kube/config
+        kubectl get pods -n kube-system -l app=flannel
+      register: flannel_check
+      ignore_errors: yes
+
+    - name: Copy Flannel manifest to ctrl
+      copy:
+        src: ./flannel.yml  
+        dest: /home/vagrant/kube-flannel.yml   
+        owner: vagrant
+        group: vagrant
+        mode: '0644'
+
+    - name: Install Flannel network plugin
+      shell: |
+        export KUBECONFIG=/home/vagrant/.kube/config
+        kubectl apply --validate=false -f /home/vagrant/kube-flannel.yml
+      when: flannel_check.rc != 0
+
+    # Assignment 2: Step 16
+    - name: Install prerequisites for Helm repo
+      apt:
+        name:
+          - curl
+          - gpg
+          - apt-transport-https
+        state: present
+        update_cache: yes
+
+    - name: Add Helm GPG key 
+      ansible.builtin.apt_key:
+        url: https://packages.buildkite.com/helm-linux/helm-debian/gpgkey
+        state: present
+        keyring: /usr/share/keyrings/helm.gpg
+
+    - name: Add Helm apt repository 
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
+        state: present
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Helm via apt
+      apt:
+        name: helm
+        state: latest
+
+  # Step 17: Check if helm-diff (called "diff") is installed
+    - name: Check if helm-diff plugin is installed
+      ansible.builtin.command:
+        cmd: helm plugin list
+      register: helm_plugins
+      become: false
+      environment:
+        HOME: /home/vagrant
+
+# Step 17: Install helm-diff only if missing
+    - name: Install helm-diff plugin
+      ansible.builtin.command:
+        cmd: helm plugin install https://github.com/databus23/helm-diff
+      become: false
+      environment:
+        HOME: /home/vagrant
+      when: "'diff' not in helm_plugins.stdout"

@@ -1,2 +1,4 @@
 .env
 .vagrant
+venv/
+playbooks/admin.conf
