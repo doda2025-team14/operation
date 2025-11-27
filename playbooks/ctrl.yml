@@ -91,7 +91,7 @@
         name: helm
         state: latest
 
-  # Step 17: Check if helm-diff (called "diff") is installed
+  # Step 17: Check if helm-diff is installed
     - name: Check if helm-diff plugin is installed
       ansible.builtin.command:
         cmd: helm plugin list
@@ -100,7 +100,6 @@
       environment:
         HOME: /home/vagrant
 
-# Step 17: Install helm-diff only if missing
     - name: Install helm-diff plugin
       ansible.builtin.command:
         cmd: helm plugin install https://github.com/databus23/helm-diff
