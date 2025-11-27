@@ -171,3 +171,9 @@
 
 
     # Assingment 2: step 12
+    
+    - name: Kubelet service is started and enabled
+      ansible.builtin.service:
+        name: kubelet
+        state: started
+        enabled: true
