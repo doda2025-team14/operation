@@ -81,26 +81,26 @@
     
     # Assingment 2: step 9
     - name: Create /etc/apt/keyrings directory
-      file:
+      ansible.builtin.file:
         path: /etc/apt/keyrings
         state: directory
         mode: '0755'
         
     - name: Download Kubernetes Release.key
-      get_url:
+      ansible.builtin.get_url:
         url: "https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key"
         dest: /etc/apt/keyrings/kubernetes-release.key
         mode: '0644'
 
     - name: Create dearmored keyring
-      command: >
+      ansible.builtin.command: >
         gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
         /etc/apt/keyrings/kubernetes-release.key
       args:
         creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
     
     - name: Add Kubernetes APT repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /"
  
     - name: Update repositories cache
