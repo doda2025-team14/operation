@@ -43,9 +43,10 @@
     - name: Check if Flannel is already installed
       shell: |
         export KUBECONFIG=/home/vagrant/.kube/config
-        kubectl get pods -n kube-system -l app=flannel
+        kubectl get ds -n kube-flannel kube-flannel-ds
       register: flannel_check
-      ignore_errors: yes
+      failed_when: false
+      changed_when: false
 
     - name: Copy Flannel manifest to ctrl
       copy:

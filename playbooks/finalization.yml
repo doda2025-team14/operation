@@ -1,0 +1,62 @@
+- hosts: all
+  become: true
+  tasks:  
+    - name: Copy MetalLB Manifest
+      copy:
+        src: ./../libs/metallb-native.yaml
+        dest: /tmp/metallb-native.yaml
+        owner: vagrant
+        group: vagrant
+        mode: '0644'
+  
+    - name: Install MetalLB
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      command: kubectl apply --validate=false -f /tmp/metallb-native.yaml
+
+    - name: Wait for MetalLB
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      command: >
+        kubectl wait -n metallb-system 
+        -l app=metallb,component=controller
+        --for=condition=ready pod
+        --timeout=300s
+        
+    - name: Create IPAddressPool
+      copy:
+        dest: /tmp/ippool.yaml
+        content: |
+          apiVersion: metallb.io/v1beta1
+          kind: IPAddressPool
+          metadata: 
+            name: default-ippool
+            namespace: metallb-system
+          spec:
+            addresses: 
+              - 192.168.56.90-192.168.56.99     
+              
+    - name: Apply IPAddressPool
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      command: kubectl apply -f /tmp/ippool.yaml
+              
+    - name: Create L2Advertisement 
+      copy:
+        dest: /tmp/l2adv.yaml
+        content: |
+          apiVersion: metallb.io/v1beta1
+          kind: L2Advertisement
+          metadata: 
+            name: default-advertisement
+            namespace: metallb-system
+          spec:
+            ipAddressPools:
+              - default-ippool        
+              
+    - name: Apply L2Advertisement
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      command: kubectl apply -f /tmp/l2adv.yaml
+      
+        
