@@ -100,9 +100,9 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+https://github.com/doda2025-team14/operation/pull/39
 
-WTEXT
+Worked on assignment 3 (migrate from Docker Compose to Kubernetes). Created Kubernetes resources for each component of the application: ConfigMap, Deployment, Service and Ingress for `app` and Deployment and Service for `model-service`. Setup basic helm chart to easily deploy the application to a cluster with one command.
 
 ### Jeffrey
 LINK
