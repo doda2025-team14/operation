@@ -48,17 +48,48 @@ We provide the necessary files to provision a Kubernetes cluster. All VMs run on
 We provide a helm chart in the /chart directory for easily deploying the application to a Kubernetes cluster.
 
 ### Prerequisites
-- Kubernetes cluster (e.g Minikube)
+- Kubernetes cluster (e.g. Minikube)
 - Helm
+- Ingress Controller (optional, but required for external access)
+
+### Installation
+
+To install the chart with the release name `my-release`:
+
+```bash
+helm install my-release ./chart
+```
+
+### Configuration
+
+The following table lists the configurable parameters of the chart and their default values.
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `app.replicaCount` | Number of replicas for the app | `1` |
+| `app.image.repository` | App image repository | `ghcr.io/doda2025-team14/app` |
+| `app.image.tag` | App image tag | `latest` |
+| `app.service.port` | App service port | `8080` |
+| `app.ingress.enabled` | Enable Ingress for app | `true` |
+| `app.ingress.hosts` | Hostnames for Ingress | `[{host: team14.local, paths: [...]}]` |
+| `modelService.replicaCount` | Number of replicas for model service | `1` |
+| `modelService.image.repository` | Model service image repository | `ghcr.io/doda2025-team14/model-service` |
+| `modelService.image.tag` | Model service image tag | `latest` |
+| `secrets.apiKey` | API Key (Placeholder for secret management) | `change-me-placeholder` |
+
+### Accessing the Application
+
+If Ingress is enabled, you can access the application at the configured host (default: `http://team14.local`). Ensure your `/etc/hosts` or DNS is configured to point `team14.local` to your Ingress Controller's IP.
 
 ### Usage
 The following instructions are for starting and deploying to a local Minikube cluster
 
 1. Start the cluster: `minikube start --driver=docker`
 2. Make sure the ingress addon is enabled: `minikube addons enable ingress`
-3. Deploy the application to the cluster: `helm install release-name-here chart/`
+3. Deploy the application to the cluster: `helm install my-release chart/`
 4. View the available services: `minikube service list`
-5. Access the application using the URL displayed by the previous step
-6. Remove the application from the cluster: `helm uninstall release-name-here`
+5. Access the application using the URL displayed by the previous step or via `http://team14.local` if configured.
+6. Remove the application from the cluster: `helm uninstall my-release`
 7. Run `minikube stop` to stop the cluster or `minikube delete` for complete removal.
+
 

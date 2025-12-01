@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: app-config
 data:
-  model_host: "http://model-service:8081"
+  model_host: {{ .Values.app.env.modelHost | quote }}
