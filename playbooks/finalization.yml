@@ -58,5 +58,27 @@
       environment:
         KUBECONFIG: /home/vagrant/.kube/config
       command: kubectl apply -f /tmp/l2adv.yaml
+
+    # Assignment 2: Step 21
+    - name: Add helm repository
+      kubernetes.core.helm_repository:
+        name: ingress-nginx
+        repo_url: "https://kubernetes.github.io/ingress-nginx"
+
+    - name: Install ingress-nginx chart
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      kubernetes.core.helm:
+        name: ingress-nginx
+        chart_ref: ingress-nginx/ingress-nginx
+        create_namespace: true
+        release_namespace: ingress-nginx
+        values:
+          controller:
+            service:
+              enabled: true
+              type: LoadBalancer
+              loadBalancerIP: 192.168.56.93
+          
       
         
