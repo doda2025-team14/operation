@@ -30,11 +30,19 @@ modelService:
     type: ClusterIP
     port: 8081
   resources: {}
+  env:
+    modelUrl: "https://github.com/doda2025-team14/model-service/releases/latest/download/model-release.tar.gz"
 
-# Example for now
+# Secret management
 secrets:
-  # Dummy value
-  apiKey: "change-me-placeholder"
+  # Set to true to create the secret with the chart.
+  # Set to false to use an existing secret (pre-deployed).
+  create: true
+  # The name of the secret to use or create.
+  name: app-secrets
+  # Data to include in the secret (only used if create is true).
+  data:
+    apiKey: "change-me-placeholder"
 
 serviceAccount:
   create: true

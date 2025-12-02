@@ -20,5 +20,10 @@ spec:
         imagePullPolicy: {{ .Values.modelService.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.modelService.service.port }}
+        env:
+        - name: MODEL_URL
+          value: {{ .Values.modelService.env.modelUrl | quote }}
+        - name: APP_PORT
+          value: {{ .Values.modelService.service.port | quote }}
         resources:
           {{- toYaml .Values.modelService.resources | nindent 10 }}
