@@ -42,4 +42,23 @@ We provide the necessary files to provision a Kubernetes cluster. All VMs run on
 1. Optional: Place your public SSH key in the 'ssh-keys' directory
 2. Navigate to this directory in your terminal
 3. Run `vagrant up` to create and provision the virtual machines
-4. Run `vagrant halt` to stop the VMs
+4. Run `vagrant halt` to stop the VMs or `vagrant destroy` for complete removal.
+
+## Deployment
+We provide a helm chart in the /chart directory for easily deploying the application to a Kubernetes cluster.
+
+### Prerequisites
+- Kubernetes cluster (e.g Minikube)
+- Helm
+
+### Usage
+The following instructions are for starting and deploying to a local Minikube cluster
+
+1. Start the cluster: `minikube start --driver=docker`
+2. Make sure the ingress addon is enabled: `minikube addons enable ingress`
+3. Deploy the application to the cluster: `helm install release-name-here chart/`
+4. View the available services: `minikube service list`
+5. Access the application using the URL displayed by the previous step
+6. Remove the application from the cluster: `helm uninstall release-name-here`
+7. Run `minikube stop` to stop the cluster or `minikube delete` for complete removal.
+

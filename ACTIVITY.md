@@ -70,9 +70,13 @@ LINK
 TEXT
 
 ### Alessandro
-LINK
+https://github.com/doda2025-team14/operation/pull/32
 
-TEXT
+Worked on steps 6, 7 and 8 of assignment 2: I configured kernel modules (overlay, br_netfilter), enabled IPv4 forwarding, and set up /etc/hosts resolution for the cluster.
+
+https://github.com/doda2025-team14/operation/pull/36
+
+Also helped debug a configuration problem, where assigning a x.x.x.100 ip to `ctrl` rendered the join process to time out for some people. Removed hardcoding of IPs from `.yml` playbook files and centralized this in the `Vagrantfile`.
 
 
 
@@ -96,9 +100,9 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+https://github.com/doda2025-team14/operation/pull/39
 
-WTEXT
+Worked on assignment 3 (migrate from Docker Compose to Kubernetes). Created Kubernetes resources for each component of the application: ConfigMap, Deployment, Service and Ingress for `app` and Deployment and Service for `model-service`. Setup basic helm chart to easily deploy the application to a cluster with one command.
 
 ### Jeffrey
 LINK
