@@ -58,5 +58,66 @@
       environment:
         KUBECONFIG: /home/vagrant/.kube/config
       command: kubectl apply -f /tmp/l2adv.yaml
-      
-        
+
+    # Assignment 2: Step 21
+    - name: Add ingress-nginx repository
+      kubernetes.core.helm_repository:
+        name: ingress-nginx
+        repo_url: "https://kubernetes.github.io/ingress-nginx"
+
+    - name: Install ingress-nginx chart
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      kubernetes.core.helm:
+        name: ingress-nginx
+        chart_ref: ingress-nginx/ingress-nginx
+        create_namespace: true
+        release_namespace: ingress-nginx
+        values:
+          controller:
+            service:
+              enabled: true
+              type: LoadBalancer
+              loadBalancerIP: 192.168.56.93
+
+    # Assignment 2: Step 22
+    - name: Add Kubernetes Dashboard Helm repo
+      kubernetes.core.helm_repository:
+        name: kubernetes-dashboard
+        repo_url: https://kubernetes.github.io/dashboard/
+
+    - name: Install Kubernetes Dashboard chart
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      kubernetes.core.helm:
+        name: kubernetes-dashboard
+        chart_ref: kubernetes-dashboard/kubernetes-dashboard
+        release_namespace: kubernetes-dashboard
+        create_namespace: true
+    
+    - name: Copy Kubernetes Dashboard Admin User Manifest
+      copy:
+        src: ./../libs/kubernetes-dashboard-adminuser.yml
+        dest: /tmp/kubernetes-dashboard-adminuser.yml
+        owner: vagrant
+        group: vagrant
+        mode: '0644'
+
+    - name: Create Admin User
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      command: kubectl apply -f /tmp/kubernetes-dashboard-adminuser.yml
+
+
+    - name: Copy Kubernetes Dashboard Ingress Manifest
+      copy:
+        src: ./../libs/kubernetes-dashboard-ingress.yml
+        dest: /tmp/kubernetes-dashboard-ingress.yml
+        owner: vagrant
+        group: vagrant
+        mode: '0644'
+
+    - name: Apply Kubernetes Dashboard Ingress
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yml
