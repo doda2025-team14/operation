@@ -52,14 +52,6 @@ We provide a helm chart in the /chart directory for easily deploying the applica
 - Helm
 - Ingress Controller (optional, but required for external access)
 
-### Installation
-
-To install the chart with the release name `my-release`:
-
-```bash
-helm install my-release ./chart
-```
-
 ### Configuration
 
 The following table lists the configurable parameters of the chart and their default values.
