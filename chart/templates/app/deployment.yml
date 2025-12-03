@@ -2,8 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app
+  labels:
+    app: app
 spec:
-  replicas: 1
+  replicas: {{ .Values.app.replicaCount }}
   selector:
     matchLabels:
       app: app
@@ -14,12 +16,20 @@ spec:
     spec:
       containers:
       - name: app
-        image: ghcr.io/doda2025-team14/app:latest
+        image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+        imagePullPolicy: {{ .Values.app.image.pullPolicy }}
         ports:
-        - containerPort: 8080
+        - containerPort: {{ .Values.app.service.port }}
         env:
         - name: MODEL_HOST
           valueFrom:
             configMapKeyRef:
               name: app-config
               key: model_host
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secrets.name }}
+              key: api-key
+        resources:
+          {{- toYaml .Values.app.resources | nindent 10 }}
