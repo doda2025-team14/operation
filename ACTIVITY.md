@@ -55,7 +55,9 @@ LINK
 TEXT
 
 ### Conall
-LINK
+https://github.com/doda2025-team14/operation/pull/34
+
+Worked on steps 13-17 of assignment 2. Created the ansible playbook file for the ctrl node in the Kubernetes cluster
 
 TEXT
 
