@@ -116,10 +116,14 @@ LINK
 TEXT
 
 ### Alessandro
-LINK
 
-TEXT
+https://github.com/doda2025-team14/operation/pull/56
 
+Implemented configurable value passing in the helm chart, added a secret.yml.
+
+https://github.com/doda2025-team14/model-service/pull/18
+
+Fixed a bug in `model-service` where the text preprocessor expected the wrong filepath for downloaded model assets.
 
 
 
