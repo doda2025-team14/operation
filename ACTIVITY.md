@@ -8,7 +8,7 @@ Project board: https://github.com/orgs/doda2025-team14/projects/2
 - https://github.com/doda2025-team14/app/pull/7
 - https://github.com/doda2025-team14/model-service/pull/9
 
-This week I set up the project template and created the dockerfiles used to create Docker images. They utilize stages to minimize the size of the final image. Additionally, they support configuring the port and the model host url using environment variables. Lastly, they are able to be built using both the amd64 and arm64 architectures.
+This week I set up the project template and created the dockerfiles used to create Docker images. They utilize stages to minimize the size of the final image. Additionally, they support configuring the port and the model host url using environment variables. Lastly, they are able to be built using both the amd64 and arm64 architectures. Implementing f3-f6.
 
 ### Elvira
 - https://github.com/doda2025-team14/operation/pull/3
@@ -45,9 +45,11 @@ Worked on assignment 1, F9 and F10. In model-service, I implemented a workflow t
 Project board: https://github.com/orgs/doda2025-team14/projects/3
 
 ### Boris
-LINK
+- https://github.com/doda2025-team14/operation/pull/35
 
-TEXT
+This week, I worked on connecting the worker nodes to the control node. 
+Additionally, I helped fix a few issues we were facing with vagrant.
+I implemented step 18-20.
 
 ### Elvira
 LINK
@@ -85,9 +87,13 @@ Also helped debug a configuration problem, where assigning a x.x.x.100 ip to `ct
 ## Week 4
 
 ### Boris
-LINK
+- https://github.com/doda2025-team14/model-service/pull/17
 
-TEXT
+I started the week with a bug fix where the model-service couldn't start due to improper model linking. 
+Additionally, I improved the train workflow to use a version specified in the source.
+And I updated the README to include more guidance on how to run the server and what the relevant optional arguments are and do.
+
+For assignment 3... TODO
 
 ### Elvira
 LINK
