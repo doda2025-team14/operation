@@ -78,10 +78,8 @@ The following instructions are for starting and deploying to a local Minikube cl
 
 1. Start the cluster: `minikube start --driver=docker`
 2. Make sure the ingress addon is enabled: `minikube addons enable ingress`
-3. Deploy the application to the cluster: `helm install my-release chart/`
+3. Deploy the application to the cluster: `helm install my-release chart/ --dependency-update`
 4. View the available services: `minikube service list`
 5. Access the application using the URL displayed by the previous step or via `http://team14.local` if configured.
 6. Remove the application from the cluster: `helm uninstall my-release`
 7. Run `minikube stop` to stop the cluster or `minikube delete` for complete removal.
-
-
