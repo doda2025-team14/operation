@@ -33,6 +33,14 @@ modelService:
   env:
     modelUrl: "https://github.com/doda2025-team14/model-service/releases/latest/download/model-release.tar.gz"
 
+kube-prometheus-stack:
+  grafana:
+    adminUser: admin
+    adminPassword: "42"
+    sidecar:
+      dashboards:
+        enabled: true
+
 # Secret management
 secrets:
   # Set to true to create the secret with the chart.

@@ -83,3 +83,11 @@ The following instructions are for starting and deploying to a local Minikube cl
 5. Access the application using the URL displayed by the previous step or via `http://team14.local` if configured.
 6. Remove the application from the cluster: `helm uninstall my-release`
 7. Run `minikube stop` to stop the cluster or `minikube delete` for complete removal.
+
+### Accessing the dashboard
+1. Port forward the dashboard to the localhost using: `kubectl port-forward svc/my-release-grafana 3000:80`
+2. Go to localhost:3000
+3. Login using admin and "42" as password
+4. On the left click dashboards and look for App and A4
+
+
