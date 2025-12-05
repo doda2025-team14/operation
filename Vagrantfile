@@ -1,8 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+require "fileutils"
 
 NUM_WORKERS = 2
 BASE_IP = 200
+INVENTORY_FILE = "inventory.cfg"
 
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-24.04"
@@ -49,6 +51,30 @@ Vagrant.configure("2") do |config|
         ansible.playbook = "playbooks/node.yml"
         ansible.extra_vars = { num_workers: NUM_WORKERS, base_ip: BASE_IP }
       end
+    end
+  end
+  
+  servers = []
+  
+  servers << {
+    "name" => "ctrl",
+    "ip_addr" => "192.168.56.#{BASE_IP}",
+    "role" => "ctrl"
+  }
+
+  (1..NUM_WORKERS).each do |i|
+    servers << {
+      "name" => "node-#{i}",
+      "ip_addr" => "192.168.56.#{BASE_IP + i}",
+      "role" => "worker"
+    }
+  end
+
+
+  File.open(INVENTORY_FILE, "w") do |f|
+    f.puts "[all]"
+    servers.each do |server|
+      f.puts "#{server['name']} ansible_host=#{server['ip_addr']}"
     end
   end
 end
