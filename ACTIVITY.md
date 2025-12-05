@@ -88,12 +88,13 @@ Also helped debug a configuration problem, where assigning a x.x.x.100 ip to `ct
 
 ### Boris
 - https://github.com/doda2025-team14/model-service/pull/17
+- https://github.com/doda2025-team14/operation/pull/66
 
 I started the week with a bug fix where the model-service couldn't start due to improper model linking. 
 Additionally, I improved the train workflow to use a version specified in the source.
 And I updated the README to include more guidance on how to run the server and what the relevant optional arguments are and do.
 
-For assignment 3... TODO
+For assignment 3, I added the grafana dashboard. It is automatically loaded using helm. it supports multiple time visualisations as well as gauges and a bar chart.
 
 ### Elvira
 - https://github.com/doda2025-team14/operation/pull/57
