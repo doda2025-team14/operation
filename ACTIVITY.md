@@ -67,9 +67,9 @@ https://github.com/doda2025-team14/operation/pull/4
 Worked on assignment 2 steps 1-5. Created initial Vagrantfile with the necessary configurations for memory, CPU, and networking. Made VMs be provisioned automatically on creation via Ansible with playbooks. Added general playbook tasks for registering public SSH keys for each VM in the cluster and disabled swap in all VMs for compatability with Kubernetes.
 
 ### Jeffrey
-LINK
+(https://github.com/doda2025-team14/operation/pull/33)
 
-TEXT
+Worked on assignment 2 steps 9-12. I added the kubernetes repository, Installed the K8s tools, I fine-tune the configuration for the containerd runtime to make it compatible with Ubuntu environment, and Start the kubelet service and register it for auto-start on future system boots.
 
 ### Alessandro
 https://github.com/doda2025-team14/operation/pull/32
@@ -112,9 +112,9 @@ https://github.com/doda2025-team14/operation/pull/39
 Worked on assignment 3 (migrate from Docker Compose to Kubernetes). Created Kubernetes resources for each component of the application: ConfigMap, Deployment, Service and Ingress for `app` and Deployment and Service for `model-service`. Setup basic helm chart to easily deploy the application to a cluster with one command.
 
 ### Jeffrey
-LINK
+https://github.com/doda2025-team14/operation/pull/63/files
 
-TEXT
+I worked on assignment 3 a bit but msotly used my time in working on the automation of inventory.cfg
 
 ### Alessandro
 
