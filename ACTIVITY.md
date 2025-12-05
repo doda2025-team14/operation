@@ -52,9 +52,7 @@ Additionally, I helped fix a few issues we were facing with vagrant.
 I implemented step 18-20.
 
 ### Elvira
-LINK
-
-TEXT
+In Week 3, I didn't contribute to the assignment due to system installation issues.
 
 ### Conall
 https://github.com/doda2025-team14/operation/pull/34
@@ -98,9 +96,10 @@ And I updated the README to include more guidance on how to run the server and w
 For assignment 3... TODO
 
 ### Elvira
-LINK
+- https://github.com/doda2025-team14/operation/pull/57
+- https://github.com/doda2025-team14/operation/pull/58
 
-TEXT
+In week 4, I worked on installing the Nginx Image Controller and the Kubernetes Dashboard from Assignment 2. Additionally, I contributed to Assignment 3 by setting up the installation of Prometheus instance and introducing the ServiceMonitors that bind the application to this instance.
 
 ### Conall
 LINK
