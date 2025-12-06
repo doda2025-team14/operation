@@ -103,7 +103,10 @@ For assignment 3, I added the grafana dashboard. It is automatically loaded usin
 In week 4, I worked on installing the Nginx Image Controller and the Kubernetes Dashboard from Assignment 2. Additionally, I contributed to Assignment 3 by setting up the installation of Prometheus instance and introducing the ServiceMonitors that bind the application to this instance.
 
 ### Conall
-LINK
+https://github.com/doda2025-team14/operation/pull/61
+github.com/doda2025-team14/app/pull/13
+
+Created the prometheus scraper for collecting metrics from the app.
 
 TEXT
 
