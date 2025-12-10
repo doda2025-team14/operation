@@ -161,9 +161,14 @@ LINK
 TEXT
 
 ### Alessandro
-LINK
 
-TEXT
+https://github.com/doda2025-team14/operation/pull/80
+
+https://github.com/doda2025-team14/model-service/pull/20
+
+https://github.com/doda2025-team14/app/pull/14
+
+Added dual deployment capability to operation and updated the workflows to produce experimental builds.
 
 
 
