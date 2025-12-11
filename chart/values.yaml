@@ -42,11 +42,11 @@ kube-prometheus-stack:
         enabled: true
 
 istio:
-  enabled: true
+  enabled: false
   gateway:
     name: istio-ingressgateway
     selector:
-      app: istio-ingressgateway
+      istio: ingressgateway
   canary:
     enabled: false
     v1Weight: 90
