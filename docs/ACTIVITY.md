@@ -162,7 +162,9 @@ Added dual deployment capability to operation and updated the workflows to produ
 
 
 
+https://github.com/doda2025-team14/operation/pull/82
 
+Helped setting up traffic monitoring using Istio.
 
 ## Week 6
 
