@@ -97,15 +97,7 @@ setup() {
     log_info "Waiting for all Istio pods to be ready..."
     kubectl wait --for=condition=ready pod --all -n istio-system --timeout=120s
     
-    # 7. Install Helm chart
-    log_info "Installing Helm chart..."
-    if [ -d "chart" ]; then
-        helm install my-release chart/ --dependency-update
-    else
-        log_warning "chart/ directory not found, skipping Helm install..."
-    fi
-    
-    # 8. Final status check
+    # 7. Final status check
     log_info "Checking cluster status..."
     echo ""
     echo "=== MINIKUBE STATUS ==="
@@ -114,10 +106,12 @@ setup() {
     echo "=== ISTIO COMPONENTS ==="
     kubectl get pods -n istio-system
     echo ""
-    echo "=== DEFAULT NAMESPACE ==="
-    kubectl get pods
     
     log_success "Setup completed!"
+
+    echo "You can now deploy to the cluster using:"
+    echo "helm install my-release chart/ --dependency-update"
+    echo ""
 }
 
 # Function to clean up on script exit
