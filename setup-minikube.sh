@@ -93,9 +93,15 @@ setup() {
     log_info "Waiting for all Istio pods to be ready..."
     kubectl wait --for=condition=ready pod --all -n istio-system --timeout=120s
     
-    # 7. Create application namespace
-    log_info "Creating application namespace 'team14'..."
-    kubectl create namespace team14 --dry-run=client -o yaml | kubectl apply -f -
+    # 7. Install Prometheus Stack
+    log_info "Installing Prometheus Stack in 'monitoring' namespace..."
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    helm repo update
+    helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
+        --namespace monitoring \
+        --create-namespace \
+        --values monitoring-values.yaml \
+        --wait
 
     # 8. Final status check
     log_info "Checking cluster status..."
