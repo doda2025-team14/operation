@@ -2,8 +2,6 @@
 
 ## Week 2
 
-Project board: https://github.com/orgs/doda2025-team14/projects/2
-
 ### Boris
 - https://github.com/doda2025-team14/app/pull/7
 - https://github.com/doda2025-team14/model-service/pull/9
@@ -20,8 +18,6 @@ I have worked on A1 and have contributed to the docker compose operation and doc
 - https://github.com/doda2025-team14/model-service/pull/12
 
 Set up GitHub org. Worked on A1F8. Created auto updating versioning for app & model-service based on single source of truth in the pom.xml.
-
-TEXT
 
 ### Wilhelm
 - https://github.com/doda2025-team14/lib-version/pull/4
@@ -42,8 +38,6 @@ Worked on assignment 1, F9 and F10. In model-service, I implemented a workflow t
 
 ## Week 3
 
-Project board: https://github.com/orgs/doda2025-team14/projects/3
-
 ### Boris
 - https://github.com/doda2025-team14/operation/pull/35
 
@@ -58,8 +52,6 @@ In Week 3, I didn't contribute to the assignment due to system installation issu
 https://github.com/doda2025-team14/operation/pull/34
 
 Worked on steps 13-17 of assignment 2. Created the ansible playbook file for the ctrl node in the Kubernetes cluster
-
-TEXT
 
 ### Wilhelm
 https://github.com/doda2025-team14/operation/pull/4
@@ -108,8 +100,6 @@ github.com/doda2025-team14/app/pull/13
 
 Created the prometheus scraper for collecting metrics from the app.
 
-TEXT
-
 ### Wilhelm
 https://github.com/doda2025-team14/operation/pull/39
 
@@ -151,9 +141,9 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+https://github.com/doda2025-team14/operation/pull/82
 
-WTEXT
+Worked on setting up traffic monitoring. Added Istio gateway, virtual service, and destination rule resources to configuration. Made Istio compatible with project (specific, targeted sidecar injection instead of global namespace injection which broke other components). Added script for setting up and deploying to Minikube with Istio (for quick reproducible testing rather than using slow VMs).
 
 ### Jeffrey
 LINK
