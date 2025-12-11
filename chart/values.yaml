@@ -42,7 +42,8 @@ kube-prometheus-stack:
         enabled: true
 
 istio:
-  enabled: false
+  enabled: true
+  useGateway: false
   gateway:
     name: istio-ingressgateway
     selector:
