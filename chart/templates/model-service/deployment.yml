@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         app: model-service
+        sidecar.istio.io/inject: "{{ .Values.istio.enabled | toString }}"
     spec:
       containers:
       - name: model-service
