@@ -1,0 +1,34 @@
+{{- if .Values.istio.useGateway }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: app-vs
+spec:
+  gateways:
+  - app-gateway
+  hosts:
+  {{- if .Values.istio.gateway.hosts }}
+  {{- range .Values.istio.gateway.hosts }}
+  - {{ . | quote }}
+  {{- end }}
+  {{- else }}
+  {{- range .Values.app.ingress.hosts }}
+  - {{ .host | quote }}
+  {{- end }}
+  {{- end }}
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: app
+        port:
+          number: {{ .Values.app.service.port }}
+    #     subset: v1
+    #   weight: {{ .Values.istio.canary.v1Weight }}
+    # - destination:
+    #     host: app
+    #     subset: v2
+    #   weight: {{ .Values.istio.canary.v2Weight }}
+{{- end }}

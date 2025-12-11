@@ -60,6 +60,20 @@ kube-prometheus-stack:
       dashboards:
         enabled: true
 
+istio:
+  enabled: true
+  useGateway: true
+  gateway:
+    name: istio-ingressgateway
+    selector:
+      istio: ingressgateway
+    hosts:
+      - istio.team14.local
+  canary:
+    enabled: false
+    v1Weight: 90
+    v2Weight: 10
+
 # Secret management
 secrets:
   # Set to true to create the secret with the chart.

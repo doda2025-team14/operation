@@ -16,6 +16,7 @@ spec:
       labels:
         app: model-service
         version: v1
+        sidecar.istio.io/inject: "{{ .Values.istio.enabled | toString }}"
     spec:
       containers:
       - name: model-service
