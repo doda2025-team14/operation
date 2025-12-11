@@ -6,4 +6,6 @@ metadata:
 spec:
   selector:
     matchLabels: { app: model-service }
+  podTargetLabels:
+  - version
   endpoints: [ { interval: 15s } ]
