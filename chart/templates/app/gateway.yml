@@ -12,7 +12,13 @@ spec:
       name: http
       protocol: HTTP
     hosts:
+    {{- if .Values.istio.gateway.hosts }}
+    {{- range .Values.istio.gateway.hosts }}
+    - {{ . | quote }}
+    {{- end }}
+    {{- else }}
     {{- range .Values.app.ingress.hosts }}
     - {{ .host | quote }}
+    {{- end }}
     {{- end }}
 {{- end }}

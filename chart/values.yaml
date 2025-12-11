@@ -43,11 +43,13 @@ kube-prometheus-stack:
 
 istio:
   enabled: true
-  useGateway: false
+  useGateway: true
   gateway:
     name: istio-ingressgateway
     selector:
       istio: ingressgateway
+    hosts:
+      - istio.team14.local
   canary:
     enabled: false
     v1Weight: 90

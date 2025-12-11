@@ -7,8 +7,14 @@ spec:
   gateways:
   - app-gateway
   hosts:
+  {{- if .Values.istio.gateway.hosts }}
+  {{- range .Values.istio.gateway.hosts }}
+  - {{ . | quote }}
+  {{- end }}
+  {{- else }}
   {{- range .Values.app.ingress.hosts }}
   - {{ .host | quote }}
+  {{- end }}
   {{- end }}
   http:
   - match:
