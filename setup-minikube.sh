@@ -53,10 +53,6 @@ check_prerequisites() {
         missing_commands+=("istioctl")
     fi
     
-    if ! command_exists helm; then
-        missing_commands+=("helm")
-    fi
-    
     if [ ${#missing_commands[@]} -ne 0 ]; then
         log_error "Missing required commands: ${missing_commands[*]}"
         log_info "Please install them before running this script."
