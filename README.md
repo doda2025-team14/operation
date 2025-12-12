@@ -83,3 +83,21 @@ The following instructions are for starting and deploying to a local Minikube cl
 5. Access the application using the URL displayed by the previous step or via `http://team14.local` if configured.
 6. Remove the application from the cluster: `helm uninstall my-release`
 7. Run `minikube stop` to stop the cluster or `minikube delete` for complete removal.
+
+### Metrics
+- The metrics page can be accessed in plaintext via `http://<app_url>/actuator/prometheus`.
+- This endpoint is scraped by Prometheus to collect data regarding:
+-- Ham/Spam Identification
+-- Total Active Users
+-- Latency Distribution
+
+- Prometheus defaults to port 9090 and you can port-forward this to your local machine using `kubectl port-forward <app-pod> 9090:<localPort>` 
+- You can query the following to get their related metrics ({} -> Optional Arguments):
+-- frontend_sms_requests_total{status="success",result="ham"}: Count of messages identified as "Ham" (i.e., not Spam)
+-- frontend_sms_requests_total{status="success",result="spam"}: Count of messages identified as "Spam"
+-- frontend_active_users: Total number of active users (within the last 5 mins)
+-- frontend_prediction_latency_seconds_bucket{status="success",le="0.1"/"0.2"/"0.5"}: Latency Historgram regions
+-- frontend_prediction_latency_seconds_count{status="success"}: total requests
+-- frontend_prediction_latency_seconds_sum{status="success"}: "total" latentcy (combine with above to get average)
+
+- To add more metrics, add a collection mechanism to FrontendController and append the output String of MetricsController to export it.

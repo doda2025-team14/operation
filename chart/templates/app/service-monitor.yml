@@ -3,7 +3,7 @@ kind: ServiceMonitor
 metadata:
   name: app-monitor
   labels:
-    release: myprom
+    release: my-release
 spec:
   selector:
     matchLabels:
