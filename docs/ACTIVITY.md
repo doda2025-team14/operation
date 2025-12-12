@@ -126,9 +126,9 @@ Fixed a bug in `model-service` where the text preprocessor expected the wrong fi
 ## Week 5
 
 ### Boris
-LINK
+- https://github.com/doda2025-team14/operation/pull/91
 
-TEXT
+With the changes to the Prometheus metrics, I had to redo the Grafana dashboard. I made a visualization for gauges, a histogram, and a few time series. 
 
 ### Elvira
 LINK
