@@ -136,9 +136,9 @@ LINK
 TEXT
 
 ### Conall
-LINK
+- https://github.com/doda2025-team14/operation/pull/90
 
-TEXT
+Refactored the Prometheus scraping to not rely on external libraries. Added new metrics,
 
 ### Wilhelm
 https://github.com/doda2025-team14/operation/pull/82
