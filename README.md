@@ -190,7 +190,7 @@ The following instructions are for starting and deploying to a local Minikube cl
 7. Run `minikube stop` to stop the cluster or `minikube delete` for complete removal.
 
 ### Metrics
-- The metrics page can be accessed in plaintext via `http://<app_url>/actuator/prometheus`.
+- The metrics page can be accessed in plaintext via `http://<app_url>/metrics`.
 - This endpoint is scraped by Prometheus to collect data regarding:
 -- Ham/Spam Identification
 -- Total Active Users
