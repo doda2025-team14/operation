@@ -206,3 +206,9 @@ The following instructions are for starting and deploying to a local Minikube cl
 -- frontend_prediction_latency_seconds_sum{status="success"}: "total" latentcy (combine with above to get average)
 
 - To add more metrics, add a collection mechanism to FrontendController and append the output String of MetricsController to export it.
+
+### Accessing the dashboard
+1. Port forward the dashboard to the localhost using: `kubectl port-forward svc/my-release-grafana 3000:80`
+2. Go to localhost:3000
+3. Login using admin and "42" as password
+4. On the left click dashboards and look for App and A4
