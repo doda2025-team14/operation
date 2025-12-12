@@ -1,0 +1,24 @@
+{{- if .Values.istio.useGateway }}
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: app-gateway
+spec:
+  selector:
+    {{- toYaml .Values.istio.gateway.selector | nindent 4 }}
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    {{- if .Values.istio.gateway.hosts }}
+    {{- range .Values.istio.gateway.hosts }}
+    - {{ . | quote }}
+    {{- end }}
+    {{- else }}
+    {{- range .Values.app.ingress.hosts }}
+    - {{ .host | quote }}
+    {{- end }}
+    {{- end }}
+{{- end }}

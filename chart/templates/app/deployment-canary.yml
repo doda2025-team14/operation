@@ -1,27 +1,27 @@
+{{- if .Values.app.canary.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-v1
+  name: app-v2
   labels:
     app: app
-    version: v1
+    version: v2
 spec:
-  replicas: {{ .Values.app.replicaCount }}
+  replicas: {{ .Values.app.canary.replicaCount }}
   selector:
     matchLabels:
       app: app
-      version: v1
+      version: v2
   template:
     metadata:
       labels:
         app: app
-        version: v1
-        sidecar.istio.io/inject: "{{ .Values.istio.enabled | toString }}"
+        version: v2
     spec:
       containers:
       - name: app
-        image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
-        imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+        image: "{{ .Values.app.canary.image.repository }}:{{ .Values.app.canary.image.tag }}"
+        imagePullPolicy: {{ .Values.app.canary.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.app.service.port }}
         env:
@@ -37,3 +37,4 @@ spec:
               key: api-key
         resources:
           {{- toYaml .Values.app.resources | nindent 10 }}
+{{- end }}

@@ -20,6 +20,15 @@ app:
   env:
     modelHost: "http://model-service:8081"
 
+  # Canary deployment configuration
+  canary:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/doda2025-team14/app
+      tag: experimental
+      pullPolicy: IfNotPresent
+
 modelService:
   replicaCount: 1
   image:
@@ -32,6 +41,38 @@ modelService:
   resources: {}
   env:
     modelUrl: "https://github.com/doda2025-team14/model-service/releases/latest/download/model-release.tar.gz"
+
+  # Canary deployment configuration
+  canary:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/doda2025-team14/model-service
+      tag: experimental
+      pullPolicy: IfNotPresent
+
+
+kube-prometheus-stack:
+  grafana:
+    adminUser: admin
+    adminPassword: "42"
+    sidecar:
+      dashboards:
+        enabled: true
+
+istio:
+  enabled: true
+  useGateway: true
+  gateway:
+    name: istio-ingressgateway
+    selector:
+      istio: ingressgateway
+    hosts:
+      - istio.team14.local
+  canary:
+    enabled: false
+    v1Weight: 90
+    v2Weight: 10
 
 # Secret management
 secrets:

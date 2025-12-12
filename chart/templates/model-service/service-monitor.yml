@@ -1,15 +1,11 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: app-monitor
+  name: model-service-monitor
   labels: { release: my-release }
 spec:
   selector:
-    matchLabels:
-      app: app
+    matchLabels: { app: model-service }
   podTargetLabels:
   - version
-  endpoints:
-    - interval: 15s
-      port: http
-      path: /actuator/prometheus
+  endpoints: [ { interval: 15s } ]

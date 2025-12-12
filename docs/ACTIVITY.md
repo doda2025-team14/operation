@@ -2,8 +2,6 @@
 
 ## Week 2
 
-Project board: https://github.com/orgs/doda2025-team14/projects/2
-
 ### Boris
 - https://github.com/doda2025-team14/app/pull/7
 - https://github.com/doda2025-team14/model-service/pull/9
@@ -20,8 +18,6 @@ I have worked on A1 and have contributed to the docker compose operation and doc
 - https://github.com/doda2025-team14/model-service/pull/12
 
 Set up GitHub org. Worked on A1F8. Created auto updating versioning for app & model-service based on single source of truth in the pom.xml.
-
-TEXT
 
 ### Wilhelm
 - https://github.com/doda2025-team14/lib-version/pull/4
@@ -42,8 +38,6 @@ Worked on assignment 1, F9 and F10. In model-service, I implemented a workflow t
 
 ## Week 3
 
-Project board: https://github.com/orgs/doda2025-team14/projects/3
-
 ### Boris
 - https://github.com/doda2025-team14/operation/pull/35
 
@@ -52,16 +46,12 @@ Additionally, I helped fix a few issues we were facing with vagrant.
 I implemented step 18-20.
 
 ### Elvira
-LINK
-
-TEXT
+In Week 3, I didn't contribute to the assignment due to system installation issues.
 
 ### Conall
 https://github.com/doda2025-team14/operation/pull/34
 
 Worked on steps 13-17 of assignment 2. Created the ansible playbook file for the ctrl node in the Kubernetes cluster
-
-TEXT
 
 ### Wilhelm
 https://github.com/doda2025-team14/operation/pull/4
@@ -69,9 +59,9 @@ https://github.com/doda2025-team14/operation/pull/4
 Worked on assignment 2 steps 1-5. Created initial Vagrantfile with the necessary configurations for memory, CPU, and networking. Made VMs be provisioned automatically on creation via Ansible with playbooks. Added general playbook tasks for registering public SSH keys for each VM in the cluster and disabled swap in all VMs for compatability with Kubernetes.
 
 ### Jeffrey
-LINK
+(https://github.com/doda2025-team14/operation/pull/33)
 
-TEXT
+Worked on assignment 2 steps 9-12. I added the kubernetes repository, Installed the K8s tools, I fine-tune the configuration for the containerd runtime to make it compatible with Ubuntu environment, and Start the kubelet service and register it for auto-start on future system boots.
 
 ### Alessandro
 https://github.com/doda2025-team14/operation/pull/32
@@ -90,22 +80,25 @@ Also helped debug a configuration problem, where assigning a x.x.x.100 ip to `ct
 
 ### Boris
 - https://github.com/doda2025-team14/model-service/pull/17
+- https://github.com/doda2025-team14/operation/pull/66
 
 I started the week with a bug fix where the model-service couldn't start due to improper model linking. 
 Additionally, I improved the train workflow to use a version specified in the source.
 And I updated the README to include more guidance on how to run the server and what the relevant optional arguments are and do.
 
-For assignment 3... TODO
+For assignment 3, I added the grafana dashboard. It is automatically loaded using helm. it supports multiple time visualisations as well as gauges and a bar chart.
 
 ### Elvira
-LINK
+- https://github.com/doda2025-team14/operation/pull/57
+- https://github.com/doda2025-team14/operation/pull/58
 
-TEXT
+In week 4, I worked on installing the Nginx Image Controller and the Kubernetes Dashboard from Assignment 2. Additionally, I contributed to Assignment 3 by setting up the installation of Prometheus instance and introducing the ServiceMonitors that bind the application to this instance.
 
 ### Conall
-LINK
+https://github.com/doda2025-team14/operation/pull/61
+github.com/doda2025-team14/app/pull/13
 
-TEXT
+Created the prometheus scraper for collecting metrics from the app.
 
 ### Wilhelm
 https://github.com/doda2025-team14/operation/pull/39
@@ -113,9 +106,9 @@ https://github.com/doda2025-team14/operation/pull/39
 Worked on assignment 3 (migrate from Docker Compose to Kubernetes). Created Kubernetes resources for each component of the application: ConfigMap, Deployment, Service and Ingress for `app` and Deployment and Service for `model-service`. Setup basic helm chart to easily deploy the application to a cluster with one command.
 
 ### Jeffrey
-LINK
+https://github.com/doda2025-team14/operation/pull/63/files
 
-TEXT
+I worked on assignment 3 a bit but msotly used my time in working on the automation of inventory.cfg
 
 ### Alessandro
 
@@ -148,9 +141,9 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+https://github.com/doda2025-team14/operation/pull/82
 
-WTEXT
+Worked on setting up traffic monitoring. Added Istio gateway, virtual service, and destination rule resources to configuration. Made Istio compatible with project (specific, targeted sidecar injection instead of global namespace injection which broke other components). Added script for setting up and deploying to Minikube with Istio (for quick reproducible testing rather than using slow VMs).
 
 ### Jeffrey
 LINK
@@ -158,13 +151,20 @@ LINK
 TEXT
 
 ### Alessandro
-LINK
 
-TEXT
+https://github.com/doda2025-team14/operation/pull/80
+
+https://github.com/doda2025-team14/model-service/pull/20
+
+https://github.com/doda2025-team14/app/pull/14
+
+Added dual deployment capability to operation and updated the workflows to produce experimental builds.
 
 
 
+https://github.com/doda2025-team14/operation/pull/82
 
+Helped setting up traffic monitoring using Istio.
 
 ## Week 6
 
