@@ -69,6 +69,10 @@ istio:
       istio: ingressgateway
     hosts:
       - istio.team14.local
+  stickySessions:
+    enabled: true
+    cookieName: "user-session"
+    ttl: "0s"
   canary:
     enabled: false
     v1Weight: 90
