@@ -196,12 +196,14 @@ LINK
 TEXT
 
 ### Alessandro
-LINK
 
-TEXT
+- https://github.com/doda2025-team14/operation/pull/94
+- https://github.com/doda2025-team14/operation/pull/95
+- https://github.com/doda2025-team14/model-service/pull/22
+- https://github.com/doda2025-team14/app/pull/17
+- https://github.com/doda2025-team14/app/pull/18
 
-
-
+I have fixed some bugs regarding image tagging in the release workflows of app and model service, I have also helped in making traffic management work in istio.
 
 
 ## Week 7
