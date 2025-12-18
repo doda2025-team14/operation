@@ -184,9 +184,11 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+- https://github.com/doda2025-team14/model-service/pull/21
+- https://github.com/doda2025-team14/app/pull/16
+- https://github.com/doda2025-team14/operation/pull/93
 
-WTEXT
+Worked on linking traffic management setup with experiment releases as shown in class. Added more versioning information for app and model-service to debug Istio networking. Implemented sticky sessions using cookies.
 
 ### Jeffrey
 LINK
