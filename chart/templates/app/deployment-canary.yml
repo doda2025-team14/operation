@@ -17,6 +17,7 @@ spec:
       labels:
         app: app
         version: v2
+        sidecar.istio.io/inject: "{{ .Values.istio.enabled | toString }}"
     spec:
       containers:
       - name: app

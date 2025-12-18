@@ -5,6 +5,15 @@ metadata:
   name: app-dr
 spec:
   host: app
+  {{- if .Values.istio.stickySessions.enabled }}
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        httpCookie:
+          name: {{ .Values.istio.stickySessions.cookieName }}
+          ttl: {{ .Values.istio.stickySessions.ttl }}
+          path: /
+  {{- end }}
   subsets:
   - name: v1
     labels:
