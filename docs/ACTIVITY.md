@@ -191,9 +191,9 @@ TEXT
 Worked on linking traffic management setup with experiment releases as shown in class. Added more versioning information for app and model-service to debug Istio networking. Implemented sticky sessions using cookies.
 
 ### Jeffrey
-LINK
+https://github.com/doda2025-team14/operation/pull/97
 
-TEXT
+This week I worked on trying to limit the access to the application to a maximum of 10 per minute. Currently in progress.
 
 ### Alessandro
 
