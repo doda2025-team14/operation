@@ -1,0 +1,28 @@
+{{- if .Values.istio.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: model-service-vs
+spec:
+  hosts:
+  - model-service
+  http:
+  - match:
+    - sourceLabels:
+        version: v1
+    route:
+    - destination:
+        host: model-service
+        subset: v1
+  - match:
+    - sourceLabels:
+        version: v2
+    route:
+    - destination:
+        host: model-service
+        subset: v2
+  - route:
+    - destination:
+        host: model-service
+        subset: v1
+{{- end }}

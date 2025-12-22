@@ -196,7 +196,7 @@ The following instructions are for starting and deploying to a local Minikube cl
 -- Total Active Users
 -- Latency Distribution
 
-- Prometheus defaults to port 9090 and you can port-forward this to your local machine using `kubectl port-forward <app-pod> 9090:<localPort>` 
+- Prometheus defaults to port 9090 and you can port-forward this to your local machine using `kubectl port-forward svc/my-release-kube-prometheus-prometheus 9090:9090` 
 - You can query the following to get their related metrics ({} -> Optional Arguments):
 -- frontend_sms_requests_total{status="success",result="ham"}: Count of messages identified as "Ham" (i.e., not Spam)
 -- frontend_sms_requests_total{status="success",result="spam"}: Count of messages identified as "Spam"
