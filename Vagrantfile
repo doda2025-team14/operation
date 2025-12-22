@@ -5,10 +5,20 @@ require "fileutils"
 NUM_WORKERS = 2
 BASE_IP = 200
 INVENTORY_FILE = "inventory.cfg"
+SHARED_DIR = "./shared" # local shared dir
 
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-24.04"
+  # Disable the defualt shared folder
   config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # Mount Shared Folder
+  config.vm.synced_folder SHARED_DIR, "/mnt/shared",
+  create: true,
+  owner: "vagrant",
+  group: "vagrant",
+  mount_options: ["dmode=775,fmode=664"]
+
 
   # Control node
   config.vm.define "ctrl" do |ctrl|
