@@ -4,3 +4,5 @@ venv/
 playbooks/admin.conf
 chart/charts/
 chart/Chart.lock
+shared/*
+!shared
