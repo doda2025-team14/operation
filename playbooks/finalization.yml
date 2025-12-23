@@ -80,6 +80,15 @@
               type: LoadBalancer
               loadBalancerIP: 192.168.56.93
 
+    - name: Wait for ingress-nginx controller to be ready
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      command: >
+        kubectl wait --for=condition=ready pod
+        -l app.kubernetes.io/component=controller
+        -n ingress-nginx
+        --timeout=120s
+
     # Assignment 2: Step 22
     - name: Add Kubernetes Dashboard Helm repo
       kubernetes.core.helm_repository:
@@ -121,3 +130,72 @@
       environment:
         KUBECONFIG: /home/vagrant/.kube/config
       command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yml
+
+    # Assignment 2: Step 23 - Install Istio
+    - name: Check if Istio is already downloaded
+      stat:
+        path: /home/vagrant/istio-1.25.2
+      register: istio_dir
+
+    - name: Download Istio 1.25.2
+      get_url:
+        url: https://github.com/istio/istio/releases/download/1.25.2/istio-1.25.2-linux-amd64.tar.gz
+        dest: /tmp/istio-1.25.2-linux-amd64.tar.gz
+        mode: '0644'
+      when: not istio_dir.stat.exists
+
+    - name: Extract Istio
+      unarchive:
+        src: /tmp/istio-1.25.2-linux-amd64.tar.gz
+        dest: /home/vagrant/
+        remote_src: yes
+        owner: vagrant
+        group: vagrant
+      when: not istio_dir.stat.exists
+
+    - name: Add istioctl to PATH in .bashrc
+      lineinfile:
+        path: /home/vagrant/.bashrc
+        line: 'export PATH="$PATH:/home/vagrant/istio-1.25.2/bin"'
+        state: present
+        create: yes
+
+    - name: Create Istio operator config for fixed gateway IP
+      copy:
+        dest: /tmp/istio-config.yaml
+        content: |
+          apiVersion: install.istio.io/v1alpha1
+          kind: IstioOperator
+          spec:
+            components:
+              ingressGateways:
+                - name: istio-ingressgateway
+                  enabled: true
+                  k8s:
+                    service:
+                      type: LoadBalancer
+                      loadBalancerIP: 192.168.56.94
+
+    - name: Check if Istio is already installed
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      shell: kubectl get ns istio-system
+      register: istio_ns_check
+      failed_when: false
+      changed_when: false
+
+    - name: Install Istio with custom config
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+        PATH: "/home/vagrant/istio-1.25.2/bin:{{ ansible_env.PATH }}"
+      command: istioctl install -y -f /tmp/istio-config.yaml
+      when: istio_ns_check.rc != 0
+
+    - name: Wait for Istio pods to be ready
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      command: >
+        kubectl wait --for=condition=ready pod
+        --all -n istio-system
+        --timeout=300s
+      when: istio_ns_check.rc != 0
