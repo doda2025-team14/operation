@@ -53,28 +53,11 @@ Vagrant.configure("2") do |config|
       end
     end
   end
-  
-  servers = []
-  
-  servers << {
-    "name" => "ctrl",
-    "ip_addr" => "192.168.56.#{BASE_IP}",
-    "role" => "ctrl"
-  }
-
-  (1..NUM_WORKERS).each do |i|
-    servers << {
-      "name" => "node-#{i}",
-      "ip_addr" => "192.168.56.#{BASE_IP + i}",
-      "role" => "worker"
-    }
-  end
-
-
-  File.open(INVENTORY_FILE, "w") do |f|
-    f.puts "[all]"
-    servers.each do |server|
-      f.puts "#{server['name']} ansible_host=#{server['ip_addr']}"
-    end
-  end
 end
+
+# Copy Vagrant's auto-generated inventory to the root directory
+vagrant_inventory = '.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory'
+if File.exist?(vagrant_inventory)
+  FileUtils.cp(vagrant_inventory, INVENTORY_FILE)
+end
+
