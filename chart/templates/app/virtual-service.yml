@@ -25,10 +25,12 @@ spec:
         host: app
         port:
           number: {{ .Values.app.service.port }}
-    #     subset: v1
-    #   weight: {{ .Values.istio.canary.v1Weight }}
-    # - destination:
-    #     host: app
-    #     subset: v2
-    #   weight: {{ .Values.istio.canary.v2Weight }}
+        subset: v1
+      weight: {{ .Values.istio.canary.v1Weight }}
+    - destination:
+        host: app
+        port:
+          number: {{ .Values.app.service.port }}
+        subset: v2
+      weight: {{ .Values.istio.canary.v2Weight }}
 {{- end }}

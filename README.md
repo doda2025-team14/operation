@@ -189,29 +189,23 @@ The following instructions are for starting and deploying to a local Minikube cl
 6. Remove the application from the cluster: `helm uninstall my-release`
 7. Run `minikube stop` to stop the cluster or `minikube delete` for complete removal.
 
-### Accessing Prometheus
-1. helm install my-release chart/ --dependency-update
-2. kubectl get svc
+### Metrics
+- The metrics page can be accessed in plaintext via `http://<app_url>/metrics`.
+- This endpoint is scraped by Prometheus to collect data regarding:
+-- Ham/Spam Identification
+-- Total Active Users
+-- Latency Distribution
 
-If Prometheus is installed you should see something like the following listed:
-```
-NAME                                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-alertmanager-operated                     ClusterIP   None             <none>        9093/TCP,9094/TCP,9094/UDP   18s
-app                                       ClusterIP   10.104.82.196    <none>        8080/TCP                     24s
-kubernetes                                ClusterIP   10.96.0.1        <none>        443/TCP                      6h48m
-model-service                             ClusterIP   10.96.150.82     <none>        8081/TCP                     24s
-my-release-grafana                        ClusterIP   10.108.70.109    <none>        80/TCP                       24s
-my-release-kube-prometheus-alertmanager   ClusterIP   10.102.1.120     <none>        9093/TCP,8080/TCP            24s
-my-release-kube-prometheus-operator       ClusterIP   10.103.128.219   <none>        443/TCP                      24s
-my-release-kube-prometheus-prometheus     ClusterIP   10.110.208.158   <none>        9090/TCP,8080/TCP            24s
-my-release-kube-state-metrics             ClusterIP   10.109.139.40    <none>        8080/TCP                     24s
-my-release-prometheus-node-exporter       ClusterIP   10.109.178.99    <none>        9100/TCP                     24s
-my-release-prometheus-windows-exporter    ClusterIP   10.101.233.199   <none>        9182/TCP                     24s
-prometheus-operated                       ClusterIP   None             <none>        9090/TCP                     18s
-```
-  
-4. Run `kubectl port-forward svc/my-release-kube-prometheus-prometheus 9090:9090` to get Prometheus running.
-5. Access `http://localhost:9090/targets` to check if Prometheus can scrape the services.
+- Prometheus defaults to port 9090 and you can port-forward this to your local machine using `kubectl port-forward svc/my-release-kube-prometheus-prometheus 9090:9090` 
+- You can query the following to get their related metrics ({} -> Optional Arguments):
+-- frontend_sms_requests_total{status="success",result="ham"}: Count of messages identified as "Ham" (i.e., not Spam)
+-- frontend_sms_requests_total{status="success",result="spam"}: Count of messages identified as "Spam"
+-- frontend_active_users: Total number of active users (within the last 5 mins)
+-- frontend_prediction_latency_seconds_bucket{status="success",le="0.1"/"0.2"/"0.5"}: Latency Historgram regions
+-- frontend_prediction_latency_seconds_count{status="success"}: total requests
+-- frontend_prediction_latency_seconds_sum{status="success"}: "total" latentcy (combine with above to get average)
+
+- To add more metrics, add a collection mechanism to FrontendController and append the output String of MetricsController to export it.
 
 ### Accessing the dashboard
 1. Port forward the dashboard to the localhost using: `kubectl port-forward svc/my-release-grafana 3000:80`

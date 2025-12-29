@@ -126,9 +126,9 @@ Fixed a bug in `model-service` where the text preprocessor expected the wrong fi
 ## Week 5
 
 ### Boris
-LINK
+- https://github.com/doda2025-team14/operation/pull/91
 
-TEXT
+With the changes to the Prometheus metrics, I had to redo the Grafana dashboard. I made a visualization for gauges, a histogram, and a few time series. 
 
 ### Elvira
 LINK
@@ -136,9 +136,9 @@ LINK
 TEXT
 
 ### Conall
-LINK
+- https://github.com/doda2025-team14/operation/pull/90
 
-TEXT
+Refactored the Prometheus scraping to not rely on external libraries. Added new metrics,
 
 ### Wilhelm
 https://github.com/doda2025-team14/operation/pull/82
@@ -184,22 +184,26 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+- https://github.com/doda2025-team14/model-service/pull/21
+- https://github.com/doda2025-team14/app/pull/16
+- https://github.com/doda2025-team14/operation/pull/93
 
-WTEXT
+Worked on linking traffic management setup with experiment releases as shown in class. Added more versioning information for app and model-service to debug Istio networking. Implemented sticky sessions using cookies.
 
 ### Jeffrey
-LINK
+https://github.com/doda2025-team14/operation/pull/97
 
-TEXT
+This week I worked on trying to limit the access to the application to a maximum of 10 per minute. Currently in progress.
 
 ### Alessandro
-LINK
 
-TEXT
+- https://github.com/doda2025-team14/operation/pull/94
+- https://github.com/doda2025-team14/operation/pull/95
+- https://github.com/doda2025-team14/model-service/pull/22
+- https://github.com/doda2025-team14/app/pull/17
+- https://github.com/doda2025-team14/app/pull/18
 
-
-
+I have fixed some bugs regarding image tagging in the release workflows of app and model service, I have also helped in making traffic management work in istio.
 
 
 ## Week 7
