@@ -1,9 +1,16 @@
+# Apply with:
+# ansible-playbook -i 192.168.56.200, ./playbooks/finalization.yml 
+# -u vagrant   --private-key .vagrant/machines/ctrl/virtualbox/private_key 
+#  -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"   -e ansible_ssh_timeout=60
+# After running the default playbooks
+
 - hosts: all
+  gather_facts: false
   become: true
-  tasks:  
+  tasks:
     - name: Copy MetalLB Manifest
       copy:
-        src: ./../libs/metallb-native.yaml
+        src: ../libs/metallb-native.yaml
         dest: /tmp/metallb-native.yaml
         owner: vagrant
         group: vagrant
@@ -11,17 +18,17 @@
   
     - name: Install MetalLB
       environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /mnt/shared/admin.conf
       command: kubectl apply --validate=false -f /tmp/metallb-native.yaml
 
-    - name: Wait for MetalLB
+    - name: Wait for MetalLB controller deployment
       environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /mnt/shared/admin.conf
       command: >
-        kubectl wait -n metallb-system 
-        -l app=metallb,component=controller
-        --for=condition=ready pod
+        kubectl rollout status deployment/controller
+        -n metallb-system
         --timeout=300s
+
         
     - name: Create IPAddressPool
       copy:
@@ -38,7 +45,7 @@
               
     - name: Apply IPAddressPool
       environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /mnt/shared/admin.conf
       command: kubectl apply -f /tmp/ippool.yaml
               
     - name: Create L2Advertisement 
@@ -56,7 +63,7 @@
               
     - name: Apply L2Advertisement
       environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /mnt/shared/admin.conf
       command: kubectl apply -f /tmp/l2adv.yaml
 
     # Assignment 2: Step 21
@@ -67,7 +74,7 @@
 
     - name: Install ingress-nginx chart
       environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /mnt/shared/admin.conf
       kubernetes.core.helm:
         name: ingress-nginx
         chart_ref: ingress-nginx/ingress-nginx
@@ -88,7 +95,7 @@
 
     - name: Install Kubernetes Dashboard chart
       environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /mnt/shared/admin.conf
       kubernetes.core.helm:
         name: kubernetes-dashboard
         chart_ref: kubernetes-dashboard/kubernetes-dashboard
@@ -97,7 +104,7 @@
     
     - name: Copy Kubernetes Dashboard Admin User Manifest
       copy:
-        src: ./../libs/kubernetes-dashboard-adminuser.yml
+        src: ../libs/kubernetes-dashboard-adminuser.yml
         dest: /tmp/kubernetes-dashboard-adminuser.yml
         owner: vagrant
         group: vagrant
@@ -105,19 +112,27 @@
 
     - name: Create Admin User
       environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /mnt/shared/admin.conf
       command: kubectl apply -f /tmp/kubernetes-dashboard-adminuser.yml
 
 
     - name: Copy Kubernetes Dashboard Ingress Manifest
       copy:
-        src: ./../libs/kubernetes-dashboard-ingress.yml
+        src: ../libs/kubernetes-dashboard-ingress.yml
         dest: /tmp/kubernetes-dashboard-ingress.yml
         owner: vagrant
         group: vagrant
         mode: '0644'
+    
+    - name: Wait for ingress-nginx controller deployment
+      environment:
+        KUBECONFIG: /mnt/shared/admin.conf
+      command: >
+        kubectl rollout status deployment/ingress-nginx-controller
+        -n ingress-nginx
+        --timeout=300s
 
     - name: Apply Kubernetes Dashboard Ingress
       environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /mnt/shared/admin.conf
       command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yml

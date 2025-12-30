@@ -1,38 +1,58 @@
+---
 - hosts: all
   become: true
+  vars:
+    ssh_keys_dir: "{{ playbook_dir }}/../ssh-keys"
+
   tasks:
-    # Assignment 2: Step 4
-    - name: Ensure ssh service is started and enabled
+    - name: Ensure ssh service is running
       service:
         name: ssh
         state: started
         enabled: true
 
+    - name: Ensure .ssh directory exists
+      file:
+        path: /home/vagrant/.ssh
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: '0700'
+
+    - name: Ensure authorized_keys exists
+      file:
+        path: /home/vagrant/.ssh/authorized_keys
+        state: touch
+        owner: vagrant
+        group: vagrant
+        mode: '0600'
+
     - name: Register public SSH keys
       authorized_key:
-        user: "{{ ansible_user }}"
+        user: vagrant
         state: present
         key: "{{ lookup('file', item) }}"
       with_fileglob:
-        - "{{ playbook_dir }}/../ssh-keys/*.pub"
+        - "{{ ssh_keys_dir }}/*.pub"
 
-    # Assignment 2: Step 5
     - name: Disable swap
-      ansible.builtin.shell: swapoff -a
+      command: swapoff -a
+      changed_when: false
 
-    - name: Remove swap entry in /etc/fstab
-      ansible.builtin.lineinfile:
+    - name: Remove swap from fstab
+      lineinfile:
         path: /etc/fstab
-        regexp: ".*swap.*"
-        state: "absent"
+        regexp: '^.*swap.*$'
+        state: absent
 
-    # Assignment 2: Step 6
+
     - name: Create k8s.conf for modules
       copy:
         dest: /etc/modules-load.d/k8s.conf
         content: |
           overlay
           br_netfilter
+        mode: '0644'
 
     - name: Load overlay module
       modprobe:
@@ -44,7 +64,7 @@
         name: br_netfilter
         state: present
 
-    # Assignment 2: Step 7
+    # Sysctl
     - name: Enable IPv4 forwarding
       sysctl:
         name: net.ipv4.ip_forward
@@ -68,113 +88,101 @@
         sysctl_set: yes
         state: present
         reload: yes
-
-    # Assignment 2: Step 8
+        
     - name: Add nodes to /etc/hosts
       blockinfile:
         path: /etc/hosts
         block: |
           192.168.56.{{ base_ip }} ctrl
-          {% for i in range(1, num_workers|int + 1) %}
+          {% for i in range(1, num_workers | int + 1) %}
           192.168.56.{{ base_ip + i }} node-{{ i }}
           {% endfor %}
 
-    # Assingment 2: step 9
-    - name: Create /etc/apt/keyrings directory
-      ansible.builtin.file:
-        path: /etc/apt/keyrings
+    - name: Ensure keyrings directory exists
+      file:
+        path: /usr/share/keyrings
         state: directory
         mode: '0755'
 
-    - name: Download Kubernetes Release.key
-      ansible.builtin.get_url:
-        url: "https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key"
-        dest: /etc/apt/keyrings/kubernetes-release.key
+    - name: Download Kubernetes apt key
+      get_url:
+        url: https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.32/deb/Release.key
+        dest: /usr/share/keyrings/kubernetes-apt-keyring.asc
         mode: '0644'
 
-    - name: Create dearmored keyring
-      ansible.builtin.command: >
-        gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-        /etc/apt/keyrings/kubernetes-release.key
+    - name: Convert Kubernetes apt key
+      command:
+        argv:
+          - gpg
+          - --dearmor
+          - -o
+          - /usr/share/keyrings/kubernetes-apt-keyring.gpg
+          - /usr/share/keyrings/kubernetes-apt-keyring.asc
       args:
-        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+        creates: /usr/share/keyrings/kubernetes-apt-keyring.gpg
 
-    - name: Add Kubernetes APT repository
-      ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /"
+    - name: Add Kubernetes apt repository
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/kubernetes-apt-keyring.gpg] https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.32/deb/ /"
+        filename: kubernetes
+        state: present
 
-    - name: Update repositories cache
-      ansible.builtin.apt:
+    - name: Update apt cache
+      apt:
         update_cache: yes
+        cache_valid_time: 3600
 
-    # Assingment 2: step 10
-    - name: Install containerd and Kubernetes tools
-      ansible.builtin.apt:
+    - name: Install containerd and runc
+      apt:
         name:
-          - containerd=1.7.24-0ubuntu1~24.04.2
-          - runc=1.3.3-0ubuntu1~24.04.3
-          - kubeadm=1.32.10-1.1
-          - kubelet=1.32.10-1.1
-          - kubectl=1.32.10-1.1
-        allow_downgrade: yes
+          - containerd
+          - runc
+        state: present
 
-    # Assingment 2: step 11
-    - name: Ensure /etc/containerd directory exists
+    - name: Install Kubernetes tools
+      apt:
+        name:
+          - kubeadm
+          - kubelet
+          - kubectl
+        state: present
+
+    - name: Ensure containerd config directory exists
       file:
         path: /etc/containerd
         state: directory
-        owner: root
-        group: root
         mode: '0755'
 
-    - name: Remove old containerd config
-      file:
-        path: /etc/containerd/config.toml
-        state: absent
-
-    - name: Create default containerd config
+    - name: Generate containerd default config
       command: containerd config default
-      register: containerd_config
-      args:
-        creates: /etc/containerd/config.toml
+      register: containerd_default
+      changed_when: false
 
-
-    - name: Save containerd config to file
+    - name: Write containerd config
       copy:
         dest: /etc/containerd/config.toml
-        content: "{{ containerd_config.stdout }}"
-        owner: root
-        group: root
+        content: "{{ containerd_default.stdout }}"
         mode: '0644'
 
-    - name: Disable apparmor
-      ansible.builtin.lineinfile:
-        path: /etc/containerd/config.toml
-        regexp: 'disable_apparmor = false'
-        line: disable_apparmor = true
-
-    - name: Set sandbox image
-      ansible.builtin.lineinfile:
-        path: /etc/containerd/config.toml
-        regexp: 'sandbox_image = ".*"'
-        line: sandbox_image = "registry.k8s.io/pause:3.10"
-
     - name: Enable SystemdCgroup
-      ansible.builtin.lineinfile:
+      lineinfile:
         path: /etc/containerd/config.toml
         regexp: 'SystemdCgroup = false'
-        line: SystemdCgroup = true
+        line: '            SystemdCgroup = true'
 
-    - name: Restart containerd service to apply changes
-      ansible.builtin.service:
+    - name: Set pause image
+      lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: 'sandbox_image = ".*"'
+        line: '    sandbox_image = "registry.k8s.io/pause:3.10"'
+
+    - name: Restart containerd
+      service:
         name: containerd
         state: restarted
+        enabled: true
 
-
-    # Assingment 2: step 12
-
-    - name: Kubelet service is started and enabled
-      ansible.builtin.service:
+    - name: Enable kubelet
+      service:
         name: kubelet
-        state: started
         enabled: true

@@ -6,6 +6,7 @@ NUM_WORKERS = 2
 BASE_IP = 200
 INVENTORY_FILE = "inventory.cfg"
 SHARED_DIR = "./shared" # local shared dir
+VMS_SHARED_DIR = "/mnt/shared" # shared dir inside VMs
 
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-24.04"
@@ -13,7 +14,7 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
   # Mount Shared Folder
-  config.vm.synced_folder SHARED_DIR, "/mnt/shared",
+  config.vm.synced_folder SHARED_DIR, VMS_SHARED_DIR,
   create: true,
   owner: "vagrant",
   group: "vagrant",
@@ -39,6 +40,7 @@ Vagrant.configure("2") do |config|
       ansible.playbook = "playbooks/ctrl.yml"
       ansible.extra_vars = { num_workers: NUM_WORKERS, base_ip: BASE_IP }
     end
+
   end
 
   # Worker nodes
@@ -48,7 +50,7 @@ Vagrant.configure("2") do |config|
       node.vm.network "private_network", ip: "192.168.56.#{BASE_IP + i}"
 
       node.vm.provider "virtualbox" do |vb|
-        vb.memory = "6144"
+        vb.memory = "2048"
         vb.cpus = "2"
       end
 
@@ -63,6 +65,15 @@ Vagrant.configure("2") do |config|
       end
     end
   end
+
+  # TODO: Tried to get this to run on ctrl after all nodes are up, but no luck
+  # # Finalization on ctrl node
+  #    config.vm.provision "ansible" do |ansible|
+  #     ansible.playbook = "playbooks/finalization.yml"
+  #     ansible.extra_vars = { num_workers: NUM_WORKERS, base_ip: BASE_IP }
+  #     ansible.inventory_path = INVENTORY_FILE
+  #   end
+  # end
   
   servers = []
   
@@ -82,9 +93,18 @@ Vagrant.configure("2") do |config|
 
 
   File.open(INVENTORY_FILE, "w") do |f|
-    f.puts "[all]"
-    servers.each do |server|
-      f.puts "#{server['name']} ansible_host=#{server['ip_addr']}"
-    end
+  f.puts "[ctrl]"
+  f.puts "ctrl ansible_host=192.168.56.#{BASE_IP}"
+
+  f.puts ""
+  f.puts "[workers]"
+  (1..NUM_WORKERS).each do |i|
+    f.puts "node-#{i} ansible_host=192.168.56.#{BASE_IP + i}"
+  end
+
+  f.puts ""
+  f.puts "[all:vars]"
+  f.puts "ansible_user=vagrant"
   end
 end
+
