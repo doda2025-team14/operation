@@ -89,18 +89,43 @@ All VMs run on the `bento/ubuntu-24.04` base system. The cluster specification c
 Note: we made the decision to deviate from the standard IP addresses specified in the assignment instructions. Instead of starting from IP address `192.168.56.100`, we start from `192.168.56.200` to avoid a common networking configuration error on the host machine related to a running DHCP server on the same IP.
 
 We use Ansible playbooks to configure the VM software:
-- `general.yml`: general configuration applied to all VMs
-- `ctrl.yml`: extra configuration applied only to the controller
-- `node.yml`: extra configuration applied only to the workers
-- `flannel.yml`: 
-- `finalization.yml`: 
+- `general.yml`: general configuration applied to all VMs (K8s tools, containerd, networking)
+- `ctrl.yml`: extra configuration applied only to the controller (cluster init, Flannel, Helm)
+- `node.yml`: extra configuration applied only to the workers (join cluster)
+- `flannel.yml`: Flannel CNI network configuration
+- `finalization.yml`: post-provisioning setup run from host (MetalLB, Ingress Controller, Dashboard, Istio)
 
 
 #### Instructions
 
-1. Optional: Place your public SSH key in the 'ssh-keys' directory. This will automatically copy your key to each VM during provisioning, allowing you to immediately connect.
-2. Run `vagrant up` to create and provision the VMs
-3. Run `vagrant halt` to stop the VMs or `vagrant destroy` for complete removal.
+1. Optional: Place your public SSH key in the `ssh-keys` directory. This will automatically copy your key to each VM during provisioning, allowing you to immediately connect.
+
+2. Run `vagrant up` to create and provision the VMs. This runs `general.yml`, `ctrl.yml`, and `node.yml` automatically.
+
+3. After VMs are up, run the finalization playbook from the host to install cluster services:
+   ```bash
+   ansible-playbook -i inventory.cfg playbooks/finalization.yml \
+     --private-key=.vagrant/machines/ctrl/virtualbox/private_key \
+     -e 'ansible_ssh_common_args="-o StrictHostKeyChecking=no"' \
+     -u vagrant --limit ctrl
+   ```
+
+4. Deploy the application using Helm:
+   ```bash
+   KUBECONFIG=./playbooks/admin.conf helm install my-release chart/ --dependency-update
+   ```
+
+5. Run `vagrant halt` to stop the VMs or `vagrant destroy` for complete removal.
+
+#### Cluster Services & IPs
+
+After provisioning, the following services are available:
+
+| Service | IP | Port |
+|---------|-----|------|
+| Ingress Controller (nginx) | 192.168.56.93 | 80, 443 |
+| Istio Gateway | 192.168.56.94 | 80, 443 |
+| Kubernetes Dashboard | Via ingress | - |
 
 
 
