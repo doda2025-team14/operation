@@ -193,7 +193,7 @@
 
     - name: Check if Istio is already installed
       environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /mnt/shared/admin.conf
       shell: kubectl get ns istio-system
       register: istio_ns_check
       failed_when: false
@@ -201,14 +201,14 @@
 
     - name: Install Istio with custom config
       environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /mnt/shared/admin.conf
         PATH: "/home/vagrant/istio-1.25.2/bin:{{ ansible_env.PATH }}"
       command: istioctl install -y -f /tmp/istio-config.yaml
       when: istio_ns_check.rc != 0
 
     - name: Wait for Istio pods to be ready
       environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /mnt/shared/admin.conf
       command: >
         kubectl wait --for=condition=ready pod
         --all -n istio-system
