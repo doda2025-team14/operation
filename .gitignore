@@ -1,6 +1,15 @@
+# Files
 .env
 .vagrant
+inventory.cfg
+
+# Directories
 venv/
 playbooks/admin.conf
 chart/charts/
 chart/Chart.lock
+shared/*
+
+# Exceptions
+!shared
+

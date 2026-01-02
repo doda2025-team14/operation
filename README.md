@@ -203,7 +203,7 @@ We provide a helm chart in the /chart directory for easily deploying the applica
 
 If Ingress is enabled, you can access the application at the configured host (default: `http://team14.local`). Ensure your `/etc/hosts` or DNS is configured to point `team14.local` to your Ingress Controller's IP.
 
-### Usage
+### Deploy with Minikube
 The following instructions are for starting and deploying to a local Minikube cluster
 
 1. Start the cluster: `minikube start --driver=docker`
@@ -213,6 +213,19 @@ The following instructions are for starting and deploying to a local Minikube cl
 5. Access the application using the URL displayed by the previous step or via `http://team14.local` if configured.
 6. Remove the application from the cluster: `helm uninstall my-release`
 7. Run `minikube stop` to stop the cluster or `minikube delete` for complete removal.
+
+### Deploy to Kubernetes Cluster on Vagrant VMs
+The following instructions are for deploying to a cluster on vagrant virtual machines.
+
+1. Ensure you have [Vagrant](https://github.com/hashicorp/vagrant) installed on your host machine.
+2. (If Required) Destory any previous VM instances: `vagrant destroy -f`
+3. Run `vagrant up --provision` to set up and provision the VMs.
+4. Once all VMs have provisioned, run `ansible-playbook -i 192.168.56.200, ./playbooks/finalization.yml -u vagrant   --private-key .vagrant/machines/ctrl/virtualbox private_key -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"   -e ansible_ssh_timeout=60 ` to run the finalization playbook in the ctrl node.
+5. Merge the cluster's KUBECONFIG with your local one `KUBECONFIG=~/.kube/config:/path/to/admin.conf kubectl config view --merge --flatten > ~/.kube/config.new mv ~/.kube/config.new ~/.kube/config`. The default path to admin.conf is `./shared/admin.conf` as defined in the Vagrantfile. Check the context names: `kubectl config get-contexts`
+6. Change kubectl context to the cluster: `kubectl config use-context <context-name>` (by default `kubernetes-admin@kubernetes`)
+7. Verify helm is using the correct context (should use kubectl's by default): `helm list`
+8. Deploy the application to the cluster: `helm install my-release chart/ --dependency-update`
+
 
 ### Metrics
 - The metrics page can be accessed in plaintext via `http://<app_url>/metrics`.
