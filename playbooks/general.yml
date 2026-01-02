@@ -106,7 +106,7 @@
 
     - name: Download Kubernetes apt key
       get_url:
-        url: https://packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.32/deb/Release.key
+        url: "https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key"
         dest: /usr/share/keyrings/kubernetes-apt-keyring.asc
         mode: '0644'
 
