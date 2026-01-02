@@ -5,10 +5,21 @@ require "fileutils"
 NUM_WORKERS = 2
 BASE_IP = 200
 INVENTORY_FILE = "inventory.cfg"
+SHARED_DIR = "./shared" # local shared dir
+VMS_SHARED_DIR = "/mnt/shared" # shared dir inside VMs
 
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-24.04"
+  # Disable the defualt shared folder
   config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # Mount Shared Folder
+  config.vm.synced_folder SHARED_DIR, VMS_SHARED_DIR,
+  create: true,
+  owner: "vagrant",
+  group: "vagrant",
+  mount_options: ["dmode=775,fmode=664"]
+
 
   # Control node
   config.vm.define "ctrl" do |ctrl|
@@ -29,6 +40,7 @@ Vagrant.configure("2") do |config|
       ansible.playbook = "playbooks/ctrl.yml"
       ansible.extra_vars = { num_workers: NUM_WORKERS, base_ip: BASE_IP }
     end
+
   end
 
   # Worker nodes
