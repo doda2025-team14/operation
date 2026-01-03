@@ -37,3 +37,8 @@ spec:
               key: api-key
         resources:
           {{- toYaml .Values.app.resources | nindent 10 }}
+      volumes:
+        - name: shared-volume
+          hostPath:
+            path: /mnt/shared
+            type: Directory

@@ -179,7 +179,10 @@ LINK
 TEXT
 
 ### Conall
-LINK
+- https://github.com/doda2025-team14/operation/pull/103
+
+Refactored the playbooks to prevent some silent failures when deploying to vagrant VMs, added some explicit directory permissions, updated README to reflect changes.
+
 
 TEXT
 

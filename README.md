@@ -15,7 +15,7 @@ You are currently in the `operation` repository which acts as a central hub from
 | Name                    | GitHub Username      | Student Number | Email                                 |
 |-------------------------|----------------------|----------------|---------------------------------------|
 | Boris Annink            | Borito185            |                | B.R.M.Annink@student.tudelft.nl       |
-| Conall Lynch            | conalllynch2015-a11y |                | C.J.Lynch@student.tudelft.nl          |
+| Conall Lynch            | conalllynch2015-a11y | 6182488        | C.J.Lynch@student.tudelft.nl          |
 | Wilhelm Marcu           | wmarcu               | 5245788        | W.P.A.Marcu@student.tudelft.nl        |
 | Jeffrey Meerovici Goryn | jmeerovici           |                | J.G.MeeroviciGoryn@student.tudelft.nl |
 | Alessandro Valmori      | alevu3344            |                | A.Valmori@student.tudelft.nl          |
@@ -89,18 +89,43 @@ All VMs run on the `bento/ubuntu-24.04` base system. The cluster specification c
 Note: we made the decision to deviate from the standard IP addresses specified in the assignment instructions. Instead of starting from IP address `192.168.56.100`, we start from `192.168.56.200` to avoid a common networking configuration error on the host machine related to a running DHCP server on the same IP.
 
 We use Ansible playbooks to configure the VM software:
-- `general.yml`: general configuration applied to all VMs
-- `ctrl.yml`: extra configuration applied only to the controller
-- `node.yml`: extra configuration applied only to the workers
-- `flannel.yml`: 
-- `finalization.yml`: 
+- `general.yml`: general configuration applied to all VMs (K8s tools, containerd, networking)
+- `ctrl.yml`: extra configuration applied only to the controller (cluster init, Flannel, Helm)
+- `node.yml`: extra configuration applied only to the workers (join cluster)
+- `flannel.yml`: Flannel CNI network configuration
+- `finalization.yml`: post-provisioning setup run from host (MetalLB, Ingress Controller, Dashboard, Istio)
 
 
 #### Instructions
 
-1. Optional: Place your public SSH key in the 'ssh-keys' directory. This will automatically copy your key to each VM during provisioning, allowing you to immediately connect.
-2. Run `vagrant up` to create and provision the VMs
-3. Run `vagrant halt` to stop the VMs or `vagrant destroy` for complete removal.
+1. Optional: Place your public SSH key in the `ssh-keys` directory. This will automatically copy your key to each VM during provisioning, allowing you to immediately connect.
+
+2. Run `vagrant up` to create and provision the VMs. This runs `general.yml`, `ctrl.yml`, and `node.yml` automatically.
+
+3. After VMs are up, run the finalization playbook from the host to install cluster services:
+   ```bash
+   ansible-playbook -i inventory.cfg playbooks/finalization.yml \
+     --private-key=.vagrant/machines/ctrl/virtualbox/private_key \
+     -e 'ansible_ssh_common_args="-o StrictHostKeyChecking=no"' \
+     -u vagrant --limit ctrl
+   ```
+
+4. Deploy the application using Helm:
+   ```bash
+   KUBECONFIG=./playbooks/admin.conf helm install my-release chart/ --dependency-update
+   ```
+
+5. Run `vagrant halt` to stop the VMs or `vagrant destroy` for complete removal.
+
+#### Cluster Services & IPs
+
+After provisioning, the following services are available:
+
+| Service | IP | Port |
+|---------|-----|------|
+| Ingress Controller (nginx) | 192.168.56.93 | 80, 443 |
+| Istio Gateway | 192.168.56.94 | 80, 443 |
+| Kubernetes Dashboard | Via ingress | - |
 
 
 
@@ -178,7 +203,7 @@ We provide a helm chart in the /chart directory for easily deploying the applica
 
 If Ingress is enabled, you can access the application at the configured host (default: `http://team14.local`). Ensure your `/etc/hosts` or DNS is configured to point `team14.local` to your Ingress Controller's IP.
 
-### Usage
+### Deploy with Minikube
 The following instructions are for starting and deploying to a local Minikube cluster
 
 1. Start the cluster: `minikube start --driver=docker`
@@ -188,6 +213,19 @@ The following instructions are for starting and deploying to a local Minikube cl
 5. Access the application using the URL displayed by the previous step or via `http://team14.local` if configured.
 6. Remove the application from the cluster: `helm uninstall my-release`
 7. Run `minikube stop` to stop the cluster or `minikube delete` for complete removal.
+
+### Deploy to Kubernetes Cluster on Vagrant VMs
+The following instructions are for deploying to a cluster on vagrant virtual machines.
+
+1. Ensure you have [Vagrant](https://github.com/hashicorp/vagrant) installed on your host machine.
+2. (If Required) Destory any previous VM instances: `vagrant destroy -f`
+3. Run `vagrant up --provision` to set up and provision the VMs.
+4. Once all VMs have provisioned, run `ansible-playbook -i 192.168.56.200, ./playbooks/finalization.yml -u vagrant   --private-key .vagrant/machines/ctrl/virtualbox private_key -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"   -e ansible_ssh_timeout=60 ` to run the finalization playbook in the ctrl node.
+5. Merge the cluster's KUBECONFIG with your local one `KUBECONFIG=~/.kube/config:/path/to/admin.conf kubectl config view --merge --flatten > ~/.kube/config.new mv ~/.kube/config.new ~/.kube/config`. The default path to admin.conf is `./shared/admin.conf` as defined in the Vagrantfile. Check the context names: `kubectl config get-contexts`
+6. Change kubectl context to the cluster: `kubectl config use-context <context-name>` (by default `kubernetes-admin@kubernetes`)
+7. Verify helm is using the correct context (should use kubectl's by default): `helm list`
+8. Deploy the application to the cluster: `helm install my-release chart/ --dependency-update`
+
 
 ### Metrics
 - The metrics page can be accessed in plaintext via `http://<app_url>/metrics`.

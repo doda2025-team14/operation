@@ -1,110 +1,76 @@
+---
 - hosts: ctrl
   become: true
+
   tasks:
-    # Assignment 2: Step 13
-    - name: Check if admin.conf exists
+    - name: Check if kubeadm already initialized
       stat:
         path: /etc/kubernetes/admin.conf
-      register: admin_conf_stat
+      register: kubeinit
 
-    # Init if admin.conf doesn't exist
-    - name: Initialize Kubernetes cluster with kubeadm
+    - name: Initialize Kubernetes control plane
       command: >
-        kubeadm init --apiserver-advertise-address=192.168.56.{{ base_ip }}
-                     --node-name ctrl
-                      --pod-network-cidr=10.244.0.0/16
-      when: admin_conf_stat.stat.exists == false
+        kubeadm init
+        --apiserver-advertise-address=192.168.56.{{ base_ip }}
+        --node-name ctrl
+        --pod-network-cidr=10.244.0.0/16
+      when: not kubeinit.stat.exists
 
-    # Assignment 2: Step 14
-    - name: Create .kube directory
-      file:
-        path: /home/vagrant/.kube
-        state: directory
-        owner: vagrant
-        group: vagrant
+    - name: Get kubeadm join command
+      command: kubeadm token create --print-join-command
+      register: join_cmd
+      changed_when: false
+      run_once: true
+
+    - name: Save join command to shared folder
+      copy:
+        content: "{{ join_cmd.stdout }}"
+        dest: /mnt/shared/kubeadm_join.sh
         mode: '0755'
 
-    - name: Copy admin.conf to vagrant kube config
+
+    - name: Copy admin.conf to host shared folder
       copy:
-        src: /etc/kubernetes/admin.conf
-        dest: /home/vagrant/.kube/config
-        owner: vagrant
-        group: vagrant
-        mode: '0644'
         remote_src: yes
-
-    - name: Copy admin.conf to host machine
-      fetch:
         src: /etc/kubernetes/admin.conf
-        dest: ./admin.conf
-        flat: yes
-
-    # Assignment 2: Step 15
-    - name: Check if Flannel is already installed
-      shell: |
-        export KUBECONFIG=/home/vagrant/.kube/config
-        kubectl get ds -n kube-flannel kube-flannel-ds
-      register: flannel_check
-      failed_when: false
-      changed_when: false
-
-    - name: Copy Flannel manifest to ctrl
+        dest: /mnt/shared/admin.conf
+        mode: "0644"
+        
+    - name: Copy custom Flannel manifest
       copy:
-        src: ./flannel.yml
-        dest: /home/vagrant/kube-flannel.yml
-        owner: vagrant
-        group: vagrant
+        src: flannel.yml
+        dest: /tmp/flannel.yml
         mode: '0644'
 
-    - name: Install Flannel network plugin
-      shell: |
-        export KUBECONFIG=/home/vagrant/.kube/config
-        kubectl apply --validate=false -f /home/vagrant/kube-flannel.yml
-      when: flannel_check.rc != 0
-
-    # Assignment 2: Step 16
-    - name: Install prerequisites for Helm repo
-      apt:
-        name:
-          - curl
-          - gpg
-          - apt-transport-https
-        state: present
-        update_cache: yes
-
-    - name: Add Helm GPG key
-      ansible.builtin.apt_key:
-        url: https://packages.buildkite.com/helm-linux/helm-debian/gpgkey
-        state: present
-        keyring: /usr/share/keyrings/helm.gpg
-
-    - name: Add Helm apt repository
-      ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
-        state: present
-
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-
-    - name: Install Helm via apt
-      apt:
-        name: helm
-        state: latest
-
-  # Step 17: Check if helm-diff is installed
-    - name: Check if helm-diff plugin is installed
-      ansible.builtin.command:
-        cmd: helm plugin list
-      register: helm_plugins
-      become: false
+    - name: Apply Flannel network
+      command: kubectl apply -f /tmp/flannel.yml
       environment:
-        HOME: /home/vagrant
+        KUBECONFIG: /mnt/shared/admin.conf
+      register: flannel_apply
+      changed_when: >
+        "created" in flannel_apply.stdout or
+        "configured" in flannel_apply.stdout
+
+
+
+    - name: Install Helm
+      shell: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      args:
+        executable: /bin/bash
+      when: not kubeinit.stat.exists
 
     - name: Install helm-diff plugin
-      ansible.builtin.command:
-        cmd: helm plugin install https://github.com/databus23/helm-diff
-      become: false
-      environment:
-        HOME: /home/vagrant
-      when: "'diff' not in helm_plugins.stdout"
+      become_user: vagrant
+      shell: helm plugin install https://github.com/databus23/helm-diff || true
+      args:
+        executable: /bin/bash
+      when: not kubeinit.stat.exists
+
+    - name: Copy finalization playbook to ctrl VM
+      copy: 
+        src: ../playbooks/finalization.yml 
+        dest: /mnt/shared/finalization.yml 
+        owner: vagrant
+        group: vagrant
+        mode: '0644'
+
