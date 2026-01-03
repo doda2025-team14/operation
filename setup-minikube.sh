@@ -92,18 +92,8 @@ setup() {
     # 6. Wait for Istio components
     log_info "Waiting for all Istio pods to be ready..."
     kubectl wait --for=condition=ready pod --all -n istio-system --timeout=120s
-    
-    # 7. Install Prometheus Stack
-    log_info "Installing Prometheus Stack in 'monitoring' namespace..."
-    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-    helm repo update
-    helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
-        --namespace monitoring \
-        --create-namespace \
-        --values monitoring-values.yaml \
-        --wait
 
-    # 8. Final status check
+    # 7. Final status check
     log_info "Checking cluster status..."
     echo ""
     echo "=== MINIKUBE STATUS ==="
