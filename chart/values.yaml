@@ -53,12 +53,38 @@ modelService:
 
 
 kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      podMetadata:
+        annotations:
+          sidecar.istio.io/inject: "false"
+  alertmanager:
+    alertmanagerSpec:
+      podMetadata:
+        annotations:
+          sidecar.istio.io/inject: "false"
+  prometheusOperator:
+    admissionWebhooks:
+      patch:
+        podAnnotations:
+          sidecar.istio.io/inject: "false"
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
+  kube-state-metrics:
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
+  prometheus-node-exporter:
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
   grafana:
     adminUser: admin
     adminPassword: "42"
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
     sidecar:
       dashboards:
         enabled: true
+
 
 istio:
   enabled: true
