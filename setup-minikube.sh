@@ -92,7 +92,7 @@ setup() {
     # 6. Wait for Istio components
     log_info "Waiting for all Istio pods to be ready..."
     kubectl wait --for=condition=ready pod --all -n istio-system --timeout=120s
-    
+
     # 7. Final status check
     log_info "Checking cluster status..."
     echo ""
@@ -106,7 +106,7 @@ setup() {
     log_success "Setup completed!"
 
     echo "You can now deploy to the cluster using:"
-    echo "helm install my-release chart/ --dependency-update"
+    echo "helm upgrade --install team14-release chart/ --namespace team14 --create-namespace --dependency-update"
     echo ""
 }
 
