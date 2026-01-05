@@ -65,46 +65,11 @@ Vagrant.configure("2") do |config|
       end
     end
   end
+end
 
-  # TODO: Tried to get this to run on ctrl after all nodes are up, but no luck
-  # # Finalization on ctrl node
-  #    config.vm.provision "ansible" do |ansible|
-  #     ansible.playbook = "playbooks/finalization.yml"
-  #     ansible.extra_vars = { num_workers: NUM_WORKERS, base_ip: BASE_IP }
-  #     ansible.inventory_path = INVENTORY_FILE
-  #   end
-  # end
-  
-  servers = []
-  
-  servers << {
-    "name" => "ctrl",
-    "ip_addr" => "192.168.56.#{BASE_IP}",
-    "role" => "ctrl"
-  }
-
-  (1..NUM_WORKERS).each do |i|
-    servers << {
-      "name" => "node-#{i}",
-      "ip_addr" => "192.168.56.#{BASE_IP + i}",
-      "role" => "worker"
-    }
-  end
-
-
-  File.open(INVENTORY_FILE, "w") do |f|
-  f.puts "[ctrl]"
-  f.puts "ctrl ansible_host=192.168.56.#{BASE_IP}"
-
-  f.puts ""
-  f.puts "[workers]"
-  (1..NUM_WORKERS).each do |i|
-    f.puts "node-#{i} ansible_host=192.168.56.#{BASE_IP + i}"
-  end
-
-  f.puts ""
-  f.puts "[all:vars]"
-  f.puts "ansible_user=vagrant"
-  end
+# Copy Vagrant's auto-generated inventory to the root directory
+vagrant_inventory = '.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory'
+if File.exist?(vagrant_inventory)
+  FileUtils.cp(vagrant_inventory, INVENTORY_FILE)
 end
 
