@@ -1,6 +1,6 @@
 # SMS Checker
 
-This repository contains coursework for the [DevOps for Distributed Apps (CS4295)](https://studyguide.tudelft.nl/courses/study-guide/educations/14776) course at [Delft University of Technology (Netherlands, EU)](https://se.ewi.tudelft.nl/teaching/) by [Dr.Sebastian Proksch](https://proks.ch/). We extend a simple [SMS Checker app](https://github.com/proksch/sms-checker) that identifies whether an SMS message is considered a spam or not (ham). More specifically, we focus on providing the necessary configuration and automation to operate the application and perform continuous experimentation.
+This repository contains coursework for the [DevOps for Distributed Apps (CS4295)](https://studyguide.tudelft.nl/courses/study-guide/educations/14776) course at [Delft University of Technology (Netherlands, EU)](https://se.ewi.tudelft.nl/teaching/) by [Dr. Sebastian Proksch](https://proks.ch/). We extend a simple [SMS Checker app](https://github.com/proksch/sms-checker) that identifies whether an SMS message is considered a spam or not (ham). More specifically, we focus on providing the necessary configuration and automation to operate the application and perform continuous experimentation.
 
 ## Organization and Repositories
 
@@ -34,6 +34,14 @@ We provide links to other resources for readers who wish to gain a deeper unders
 ## Configuration and Options
 
 ### Environment Variables
+
+| Variable | Scope |Description | Default |
+|--------|------|-------|---------|
+| `MODEL_HOST` | `app` | The hostname of the model-service that the frontend app should call to get SMS predictions | ??? |
+| `API_KEY` | `app` | Secret API key | ??? |
+| `ENABLE_CACHE` | `app` | Tells the frontend whether to send the X-Cache-Enabled: true header to the model-service. This enables caching for requests which is part of the experiment performed in the canary release | `false` |
+| `MODEL_URL` | `model-service` | URL to download the pre-trained SMS spam detection model (model-release.tar.gz). The model-service downloads and extracts this file at startup if not already present. | ??? |
+| `APP_PORT` | `model-service` | Port that the Flask app will listen on inside the container. | ??? |
 
 ### Helm Chart Values
 
