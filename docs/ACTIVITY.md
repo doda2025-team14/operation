@@ -227,9 +227,11 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+- https://github.com/doda2025-team14/model-service/pull/24
+- https://github.com/doda2025-team14/app/pull/24
+- https://github.com/doda2025-team14/operation/pull/109
 
-WTEXT
+Worked on implementation and documentation for continuous experimentation. Added caching to model-service as part of experiment. Created new endpoint for viewing cache statistics. Modified /sms endpoint to set header for enabling/disabling caching. Made caching an experimental feature by setting environment variable for canary app deployment.
 
 ### Jeffrey
 LINK
