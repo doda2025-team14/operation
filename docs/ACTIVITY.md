@@ -239,11 +239,25 @@ LINK
 TEXT
 
 ### Alessandro
-LINK
 
-TEXT
+#### Provisioning and Deployment
+- https://github.com/doda2025-team14/operation/pull/88  (opened on Dec 11th but merged this week, has had multiple refactors)
+
+This basically disable istio sidecar injections into the monitoring pods to get everything to work.
 
 
+#### Versioning and Experimentation
+- https://github.com/doda2025-team14/app/pull/20
+- https://github.com/doda2025-team14/app/pull/21
+- https://github.com/doda2025-team14/app/pull/22
+- https://github.com/doda2025-team14/app/pull/23
+
+- https://github.com/doda2025-team14/model-service/pull/23
+- https://github.com/doda2025-team14/lib-version/pull/7
+
+
+
+What I did is i created a GitHub App and installed it in the org. It's extremely basic and doesn't do anything in particular in itself, it is only used as an actor which is used to push version bumps onto master for stable releases (i.e. when something is merged into master). This was needed because master branches are protected across repositories, and this was, in my opinion, a good way to automate version bumping in a way that doesn't trivialize the assignment at all, and it's a lot less error-prone and automated than manually bumping the version.
 
 
 
