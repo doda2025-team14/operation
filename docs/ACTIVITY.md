@@ -259,6 +259,11 @@ This basically disable istio sidecar injections into the monitoring pods to get 
 
 What I did is i created a GitHub App and installed it in the org. It's extremely basic and doesn't do anything in particular in itself, it is only used as an actor which is used to push version bumps onto master for stable releases (i.e. when something is merged into master). This was needed because master branches are protected across repositories, and this was, in my opinion, a good way to automate version bumping in a way that doesn't trivialize the assignment at all, and it's a lot less error-prone and automated than manually bumping the version.
 
+#### Multi-arch Builds
+
+- https://github.com/doda2025-team14/app/pull/20
+
+Added multi-architecture builds to the release flow of app.
 
 
 ## Week 8
