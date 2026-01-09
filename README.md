@@ -26,6 +26,7 @@ We provide links to other resources for readers who wish to gain a deeper unders
 
 - [`docs/deployment`](https://github.com/doda2025-team14/operation/blob/master/docs/deployment.md): For understanding the structure and data flow of the final deployment.
 - [`docs/extension`](https://github.com/doda2025-team14/operation/blob/master/docs/extension.md): For gaining insight into the limitations/shortcomings of this project and how to improve upon them in future work.
+- [`docs/continuous-experimentation`](https://github.com/doda2025-team14/operation/blob/master/docs/continuous-experimentation.md): For understanding the experimental design and evaluation process used to assess new feature proposals.
 - [`docs/activity`](https://github.com/doda2025-team14/operation/blob/master/docs/ACTIVITY.md): For a high level overview of the weekly contributions of each team member
 - [`project backlog`](https://github.com/orgs/doda2025-team14/projects/4/views/1): For a detailed collection of issues and merge requests and an insight into the workload distribution.
 
