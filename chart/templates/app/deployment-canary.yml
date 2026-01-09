@@ -36,6 +36,8 @@ spec:
             secretKeyRef:
               name: {{ .Values.secrets.name }}
               key: api-key
+        - name: ENABLE_CACHE
+          value: "true"
         resources:
           {{- toYaml .Values.app.resources | nindent 10 }}
 {{- end }}
