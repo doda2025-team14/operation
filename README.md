@@ -18,7 +18,7 @@ You are currently in the `operation` repository which acts as a central hub from
 | Conall Lynch            | conalllynch2015-a11y | 6182488        | C.J.Lynch@student.tudelft.nl          |
 | Wilhelm Marcu           | wmarcu               | 5245788        | W.P.A.Marcu@student.tudelft.nl        |
 | Jeffrey Meerovici Goryn | jmeerovici           |                | J.G.MeeroviciGoryn@student.tudelft.nl |
-| Alessandro Valmori      | alevu3344            |                | A.Valmori@student.tudelft.nl          |
+| Alessandro Valmori      | alevu3344            | 6518885        | A.Valmori@student.tudelft.nl          |
 
 ### Additional Documentation
 
