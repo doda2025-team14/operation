@@ -17,20 +17,42 @@ spec:
   {{- end }}
   {{- end }}
   http:
+  {{- if .Values.istio.canary.enabled }}
   - match:
-    - uri:
-        prefix: /
+    - authority:
+        exact: istio.team14.local
     route:
-    - destination:
-        host: app
-        port:
-          number: {{ .Values.app.service.port }}
-        subset: v1
-      weight: {{ .Values.istio.canary.v1Weight }}
-    - destination:
-        host: app
-        port:
-          number: {{ .Values.app.service.port }}
-        subset: v2
-      weight: {{ .Values.istio.canary.v2Weight }}
+      - destination:
+          host: app
+          port:
+            number: {{ .Values.app.service.port }}
+          subset: v1
+        weight: {{ .Values.istio.canary.v1Weight }}
+      - destination:
+          host: app
+          port:
+            number: {{ .Values.app.service.port }}
+          subset: v2
+        weight: {{ .Values.istio.canary.v2Weight }}
+  - match:
+    - authority:
+        exact: canary.team14.local
+    route:
+      - destination:
+          host: app
+          port:
+            number: {{ .Values.app.service.port }}
+          subset: v2
+  {{- else }}
+  - match:
+    - authority:
+        exact: istio.team14.local
+    route:
+      - destination:
+          host: app
+          port:
+            number: {{ .Values.app.service.port }}
+          subset: v1
+  {{- end }}
 {{- end }}
+
