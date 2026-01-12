@@ -2,6 +2,8 @@
 
 This repository contains coursework for the [DevOps for Distributed Apps (CS4295)](https://studyguide.tudelft.nl/courses/study-guide/educations/14776) course at [Delft University of Technology (Netherlands, EU)](https://se.ewi.tudelft.nl/teaching/) by [Dr. Sebastian Proksch](https://proks.ch/). We extend a simple [SMS Checker app](https://github.com/proksch/sms-checker) that identifies whether an SMS message is considered a spam or not (ham). More specifically, we focus on providing the necessary configuration and automation to operate the application and perform continuous experimentation.
 
+
+
 ## Organization and Repositories
 
 You are currently in the `operation` repository which acts as a central hub from which we can deploy, orchestrate, and monitor the application. Beyond this, we have three other repositories in our organization:
@@ -111,31 +113,6 @@ We use Ansible playbooks to configure the VM software:
 
 2. Run `vagrant up` to create and provision the VMs. This runs `general.yml`, `ctrl.yml`, and `node.yml` automatically.
 
-3. After VMs are up, run the finalization playbook from the host to install cluster services:
-   ```bash
-   ansible-playbook -i inventory.cfg playbooks/finalization.yml \
-     --private-key=.vagrant/machines/ctrl/virtualbox/private_key \
-     -e 'ansible_ssh_common_args="-o StrictHostKeyChecking=no"' \
-     -u vagrant --limit ctrl
-   ```
-
-4. Deploy the application using Helm:
-   ```bash
-   KUBECONFIG=./playbooks/admin.conf helm install my-release chart/ --dependency-update
-   ```
-
-5. Run `vagrant halt` to stop the VMs or `vagrant destroy` for complete removal.
-
-#### Cluster Services & IPs
-
-After provisioning, the following services are available:
-
-| Service | IP | Port |
-|---------|-----|------|
-| Ingress Controller (nginx) | 192.168.56.93 | 80, 443 |
-| Istio Gateway | 192.168.56.94 | 80, 443 |
-| Kubernetes Dashboard | Via ingress | - |
-
 
 
 ## Deploying and Running the Application
@@ -162,9 +139,64 @@ We provide pre-built images which you can use to run the application. The availa
 
 #### Instructions
 
-We provide a helm chart in the `/chart` directory for easily deploying the application to a Kubernetes cluster. To deploy, run: `helm install my-release chart/ --dependency-update`
+We provide a helm chart in the `/chart` directory for easily deploying the application to a Kubernetes cluster.
 
-### Exposed Endpoints
+If you are running a minikube cluster, you can deploy to it by running:
+```bash
+helm install my-release chart/ --dependency-update
+```
+
+If you are running a provisioned VM cluster, there are a few extra steps before you can deploy with helm:
+
+1. Ensure that all of the VMs have spun up and then run the finalization playbook from the host to install cluster services:
+   ```bash
+   ansible-playbook -i inventory.cfg playbooks/finalization.yml \
+     --private-key=.vagrant/machines/ctrl/virtualbox/private_key \
+     -e 'ansible_ssh_common_args="-o StrictHostKeyChecking=no"' \
+     -u vagrant --limit ctrl
+   ```
+
+2. Export the `KUBECONFIG`:
+   ```bash
+   export KUBECONFIG=./shared/admin.conf
+   ```
+
+3. Merge the cluster's `KUBECONFIG` with the local one:
+   ```bash
+   KUBECONFIG=~/.kube/config:./shared/admin.conf \
+   kubectl config view --raw --flatten > ~/.kube/config.tmp && \
+   mv ~/.kube/config.tmp ~/.kube/config
+   ```
+
+4. Change kubectl context to the cluster:
+   ```bash
+   kubectl config use-context kubernetes-admin@kubernetes
+   ```
+
+5. Deploy the application using Helm:
+   ```bash
+   helm install my-release chart/ --dependency-update
+   ```
+
+We provide a script `deploy-to-vms.sh` for ease of use which performs the above instructions.
+
+
+
+## Services and Endpoints
+
+| Service | IP | Port |
+|---------|-----|------|
+| Ingress Controller (nginx) | 192.168.56.93 | 80, 443 |
+| Istio Gateway | 192.168.56.94 | 80, 443 |
+| Kubernetes Dashboard | Via ingress | - |
+
+If Ingress is enabled, you can access the application at the configured host (default: `http://team14.local`). Ensure your `/etc/hosts` or DNS is configured to point `team14.local` to your Ingress Controller's IP.
+
+To access the Grafana dashboard:
+1. Port forward the dashboard to the localhost using: `kubectl port-forward svc/my-release-grafana 3000:80`
+2. Go to localhost:3000
+3. Login using admin and "42" as password
+4. On the left click dashboards and look for App and A4
 
 
 
@@ -172,78 +204,13 @@ We provide a helm chart in the `/chart` directory for easily deploying the appli
 
 ### Metrics
 
-### Alerting
-
-
-
-## Legacy
-
-Anything below this section is part of the old readme and is not yet moved/adapted into the new readme
-
-## Run the application
-
-### Requirements
-
-To run this application, you need to have Docker and Docker Compose installed.
-
-### Process
-
-1. Clone the operation repository.
-
-2. Create a  ```.env``` file and define the exposed port of the localhost. If you don't define any, 8080 will be used as a default port. Here is an example of the contents of the ```.env``` file: 
-
-```HOST_PORT=9000```
-
-3. To start the application, run the following command ```docker compose up -d```
-
-If the command runs successfully, congratulations! The web app can be accessed by typing this link on the browser: ```http://localhost:{HOST_PORT}/sms/```. For example, if you use the default port, type: ```http://localhost:8080/sms/```.
-
-
-
-## Deployment
-We provide a helm chart in the /chart directory for easily deploying the application to a Kubernetes cluster.
-
-### Prerequisites
-- Kubernetes cluster (e.g. Minikube)
-- Helm
-- Ingress Controller (optional, but required for external access)
-
-### Accessing the Application
-
-If Ingress is enabled, you can access the application at the configured host (default: `http://team14.local`). Ensure your `/etc/hosts` or DNS is configured to point `team14.local` to your Ingress Controller's IP.
-
-### Deploy with Minikube
-The following instructions are for starting and deploying to a local Minikube cluster
-
-1. Start the cluster: `minikube start --driver=docker`
-2. Make sure the ingress addon is enabled: `minikube addons enable ingress`
-3. Deploy the application to the cluster: `helm install my-release chart/ --dependency-update`
-4. View the available services: `minikube service list`
-5. Access the application using the URL displayed by the previous step or via `http://team14.local` if configured.
-6. Remove the application from the cluster: `helm uninstall my-release`
-7. Run `minikube stop` to stop the cluster or `minikube delete` for complete removal.
-
-### Deploy to Kubernetes Cluster on Vagrant VMs
-The following instructions are for deploying to a cluster on vagrant virtual machines.
-
-1. Ensure you have [Vagrant](https://github.com/hashicorp/vagrant) installed on your host machine.
-2. (If Required) Destory any previous VM instances: `vagrant destroy -f`
-3. Run `vagrant up --provision` to set up and provision the VMs.
-4. Once all VMs have provisioned, run `ansible-playbook -i 192.168.56.200, ./playbooks/finalization.yml -u vagrant   --private-key .vagrant/machines/ctrl/virtualbox private_key -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"   -e ansible_ssh_timeout=60 ` to run the finalization playbook in the ctrl node.
-5. Merge the cluster's KUBECONFIG with your local one `KUBECONFIG=~/.kube/config:/path/to/admin.conf kubectl config view --merge --flatten > ~/.kube/config.new mv ~/.kube/config.new ~/.kube/config`. The default path to admin.conf is `./shared/admin.conf` as defined in the Vagrantfile. Check the context names: `kubectl config get-contexts`
-6. Change kubectl context to the cluster: `kubectl config use-context <context-name>` (by default `kubernetes-admin@kubernetes`)
-7. Verify helm is using the correct context (should use kubectl's by default): `helm list`
-8. Deploy the application to the cluster: `helm install my-release chart/ --dependency-update`
-
-
-### Metrics
 - The metrics page can be accessed in plaintext via `http://<app_url>/metrics`.
 - This endpoint is scraped by Prometheus to collect data regarding:
 -- Ham/Spam Identification
 -- Total Active Users
 -- Latency Distribution
 
-- Prometheus defaults to port 9090 and you can port-forward this to your local machine using `kubectl port-forward svc/my-release-kube-prometheus-prometheus 9090:9090` 
+- Prometheus defaults to port 9090 and you can port-forward this to your local machine using `kubectl port-forward svc/my-release-kube-prometheus-prometheus 9090:9090`
 - You can query the following to get their related metrics ({} -> Optional Arguments):
 -- frontend_sms_requests_total{status="success",result="ham"}: Count of messages identified as "Ham" (i.e., not Spam)
 -- frontend_sms_requests_total{status="success",result="spam"}: Count of messages identified as "Spam"
@@ -254,8 +221,5 @@ The following instructions are for deploying to a cluster on vagrant virtual mac
 
 - To add more metrics, add a collection mechanism to FrontendController and append the output String of MetricsController to export it.
 
-### Accessing the dashboard
-1. Port forward the dashboard to the localhost using: `kubectl port-forward svc/my-release-grafana 3000:80`
-2. Go to localhost:3000
-3. Login using admin and "42" as password
-4. On the left click dashboards and look for App and A4
+### Alerting
+
