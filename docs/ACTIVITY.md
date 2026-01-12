@@ -293,12 +293,10 @@ LINK
 TEXT
 
 ### Alessandro
-LINK
 
-TEXT
+- https://github.com/doda2025-team14/model-service/pull/25
 
-
-
+The update of `version.txt` wasn't working correctly because the `Dockerfile` wasn't using the new `build-arg` passed from the workflow.
 
 
 ## Week 9
