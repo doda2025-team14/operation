@@ -169,9 +169,7 @@ Helped setting up traffic monitoring using Istio.
 ## Week 6
 
 ### Boris
-LINK
-
-TEXT
+N/A
 
 ### Elvira
 LINK
@@ -212,9 +210,10 @@ I have fixed some bugs regarding image tagging in the release workflows of app a
 ## Week 7
 
 ### Boris
-LINK
+- https://github.com/doda2025-team14/operation/pull/112
+- https://github.com/doda2025-team14/operation/pull/113
 
-TEXT
+This week, I updated the docker-compose to include caching the model and started working on improving the routing to v2 version
 
 ### Elvira
 LINK
