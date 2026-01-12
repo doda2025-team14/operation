@@ -124,6 +124,32 @@
         KUBECONFIG: /mnt/shared/admin.conf
       command: kubectl apply -f /tmp/kubernetes-dashboard-adminuser.yml
 
+    # Create TLS secret for HTTPS ingress
+    - name: Copy TLS certificate
+      copy:
+        src: ../certs/tls.crt
+        dest: /tmp/tls.crt
+        owner: vagrant
+        group: vagrant
+        mode: '0644'
+
+    - name: Copy TLS key
+      copy:
+        src: ../certs/tls.key
+        dest: /tmp/tls.key
+        owner: vagrant
+        group: vagrant
+        mode: '0600'
+
+    - name: Create TLS secret in kubernetes-dashboard namespace
+      environment:
+        KUBECONFIG: /mnt/shared/admin.conf
+      shell: |
+        kubectl create secret tls ingress-tls \
+          --cert=/tmp/tls.crt \
+          --key=/tmp/tls.key \
+          -n kubernetes-dashboard \
+          --dry-run=client -o yaml | kubectl apply -f -
 
     - name: Copy Kubernetes Dashboard Ingress Manifest
       copy:
