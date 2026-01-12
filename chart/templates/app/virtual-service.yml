@@ -20,7 +20,7 @@ spec:
   {{- if .Values.istio.canary.enabled }}
   - match:
     - authority:
-        exact: istio.team14.local
+        exact: {{ index .Values.istio.gateway.hosts 0 }}
     route:
       - destination:
           host: app
@@ -34,19 +34,10 @@ spec:
             number: {{ .Values.app.service.port }}
           subset: v2
         weight: {{ .Values.istio.canary.v2Weight }}
-  - match:
-    - authority:
-        exact: canary.team14.local
-    route:
-      - destination:
-          host: app
-          port:
-            number: {{ .Values.app.service.port }}
-          subset: v2
   {{- else }}
   - match:
     - authority:
-        exact: istio.team14.local
+        exact: {{ index .Values.istio.gateway.hosts 0 }}
     route:
       - destination:
           host: app
@@ -54,5 +45,14 @@ spec:
             number: {{ .Values.app.service.port }}
           subset: v1
   {{- end }}
+  - match:
+    - authority:
+        exact: {{ index .Values.istio.gateway.hosts 1 }}
+    route:
+      - destination:
+          host: app
+          port:
+            number: {{ .Values.app.service.port }}
+          subset: v2
 {{- end }}
 

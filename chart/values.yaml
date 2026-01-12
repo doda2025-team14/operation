@@ -94,7 +94,10 @@ istio:
     selector:
       istio: ingressgateway
     hosts:
+      # canary.enabled: true -> v1 or v2
+      # else                 -> v1
       - istio.team14.local
+      # v2
       - canary.team14.local
   stickySessions:
     enabled: true
