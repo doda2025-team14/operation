@@ -34,32 +34,54 @@ We provide links to other resources for readers who wish to gain a deeper unders
 
 
 
-## Configuration and Options
+## Configuration
+
+Configuration is split across three files, each serving as the Single Source of Truth (SSOT) for its domain:
+
+| File | Purpose | Used By |
+|------|---------|---------|
+| `.env.example` | Container images, ports, service URLs | Docker Compose |
+| `chart/values.yaml` | K8s deployments, ingress, hostnames, Istio, Grafana | Helm |
+| `Vagrantfile` | VM count, IPs, memory allocation | Vagrant/Ansible |
 
 ### Environment Variables
 
-| Variable | Scope |Description | Default |
-|--------|------|-------|---------|
-| `MODEL_HOST` | `app` | The hostname of the model-service that the frontend app should call to get SMS predictions | ??? |
-| `API_KEY` | `app` | Secret API key | ??? |
-| `ENABLE_CACHE` | `app` | Tells the frontend whether to send the X-Cache-Enabled: true header to the model-service. This enables caching for requests which is part of the experiment performed in the canary release | `false` |
-| `MODEL_URL` | `model-service` | URL to download the pre-trained SMS spam detection model (model-release.tar.gz). The model-service downloads and extracts this file at startup if not already present. | ??? |
-| `APP_PORT` | `model-service` | Port that the Flask app will listen on inside the container. | ??? |
+Copy `.env.example` to `.env` and customize as needed.
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `REGISTRY` | Container registry | `ghcr.io/doda2025-team14` |
+| `APP_IMAGE_REPO` | App image repository | `${REGISTRY}/app` |
+| `APP_IMAGE_TAG_STABLE` | App image tag | `stable` |
+| `MODEL_SERVICE_IMAGE_REPO` | Model service repository | `${REGISTRY}/model-service` |
+| `MODEL_SERVICE_IMAGE_TAG_STABLE` | Model service tag | `stable` |
+| `APP_PORT` | App container port | `8080` |
+| `MODEL_SERVICE_PORT` | Model service container port | `8081` |
+| `ENABLE_CACHE` | Enable caching feature | `false` |
+| `HOST_PORT` | Host port mapping | `8080` |
+| `MODEL_HOST` | URL for app to reach model-service | `http://model-service:8081` |
+| `MODEL_URL` | Model artifacts download URL | `https://github.com/doda2025-team14/model-service/releases/latest/download/model-release.tar.gz` |
 
 ### Helm Chart Values
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `app.replicaCount` | Number of replicas for the app | `1` |
-| `app.image.repository` | App image repository | `ghcr.io/doda2025-team14/app` |
-| `app.image.tag` | App image tag | `latest` |
-| `app.service.port` | App service port | `8080` |
-| `app.ingress.enabled` | Enable Ingress for app | `true` |
-| `app.ingress.hosts` | Hostnames for Ingress | `[{host: team14.local, paths: [...]}]` |
-| `modelService.replicaCount` | Number of replicas for model service | `1` |
-| `modelService.image.repository` | Model service image repository | `ghcr.io/doda2025-team14/model-service` |
-| `modelService.image.tag` | Model service image tag | `latest` |
-| `secrets.apiKey` | API Key (Placeholder for secret management) | `change-me-placeholder` |
+For Kubernetes deployments, all configuration is in `chart/values.yaml`. Override values with `--set` or a custom values file.
+
+- `app.*` - App deployment, service, ingress configuration
+- `modelService.*` - Model service deployment configuration  
+- `istio.*` - Istio gateway and virtual service settings
+- `grafana.*` - Grafana admin credentials
+- `secrets.*` - Secret management options
+
+### Vagrant/Ansible
+
+VM provisioning is configured at the top of the `Vagrantfile`:
+
+```ruby
+NUM_WORKERS = 2      # Number of worker nodes
+BASE_IP = 200        # Base IP (192.168.56.BASE_IP)
+```
+
+These values are passed to Ansible playbooks via `extra_vars`.
 
 
 
