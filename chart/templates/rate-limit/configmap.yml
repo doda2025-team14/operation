@@ -6,12 +6,12 @@ data:
   config.yaml: |
     domain: ratelimit
     descriptors:
-    - key: PATH
-      value: "sms"
-      rate_limit:
-        unit: minute
-        requests_per_unit: 1
-    - key: PATH
-      rate_limit:
-        unit: minute
-        requests_per_unit: 1
+      - key: PATH
+        value: "/sms/"
+        rate_limit:
+          unit: minute
+          requests_per_unit: 5
+      - key: PATH
+        rate_limit:
+          unit: minute
+          requests_per_unit: 10
