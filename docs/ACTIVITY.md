@@ -283,9 +283,10 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+- https://github.com/doda2025-team14/operation/pull/122
+- https://github.com/doda2025-team14/operation/pull/116
 
-WTEXT
+Created proposal for project extension: declarative provisioning using NixOS instead of Ansible. Explained motivation for chosen proposal as well as benefits of NixOS and justified significance to the project. Also improved deployment instructions in README.md and created `deploy-to-vms.sh` script to simplify the deployment process.
 
 ### Jeffrey
 LINK
