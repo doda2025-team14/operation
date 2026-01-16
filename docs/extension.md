@@ -8,10 +8,26 @@ A recurring pain point throughout the development process was extending the Ansi
 
 
 ## Proposed Solution: NixOS
+To address these shortcomings, we propose replacing the Ubuntu VMs and Ansible playbooks with NixOS VMs and a declarative Nix configuration. NixOS is a Linux distribution built on the Nix package manager which takes a purely functional and declarative approach to system configuration [[3]]. All system details, including permissions, network settings, packages and program configuration, can be declared and applied all at once without needing to worry about the exact order of steps required to achieve the desired state. This provides a layer of abstraction for the entire provisioning process with stronger guarantees about correctness and reproducibility.
+
+Furthermore, NixOS is an immutable operating system meaning that changes to the system configuration do not mutate the existing state but instead produces a new snapshot of the system called a generation. This process is entirely atomic: either Nix can successfully evaluate the configuration and apply it immediately, or evaluation fails and the system remains in the previous working version. Consequently, the problem of Ansible sometimes producing a partially configured VM is no longer a concern. Each system generation is also saved which provides an efficient rollback mechanism.
 
 
 
 ## Refactoring Strategy
+We present a list of tasks required to switch from Ansible to NixOS
+
+**Task 1: Setup Nix Flake Structure:** Create a `flake.nix` file at the root of the `operation` repository. This file will define the inputs (NixOS version and other dependencies) and outputs (the NixOS configurations for the control plane and worker nodes). Flakes provide a standardised way to manage Nix projects and ensure reproducibility by pinning all dependencies and their version information in a `flake.lock` file.
+
+**Task 2: Create NixOS Modules for Control Plane and Worker Nodes:** Create two files `ctrl.nix` and `node.nix` which will contain the declarative configuration for each type of node.
+
+**Task 3: Translate Playbook Logic into Nix:** The configuration required for each node type in the cluster is specified in steps 1-17 as described in [A2: Provisioning a Kubernetes Cluster](https://brightspace.tudelft.nl/d2l/le/content/774572/viewContent/4646349/View). These steps need to be performed in the the Nix configuration language rather than sequenced Linux commands in an Ansible playbook. Tools such as [MyNixOS](https://mynixos.com/) can be used to look up individual packages and options available in NixOS. For example, installing software or tools requires adding them to the `environment.systemPackages` list in the NixOS configuration.
+
+**Task 4: Update Vagrantfile:** Modify the `Vagrantfile` to use a generic NixOS base box instead of the current Ubuntu box. The provisioning step also needs to be updated to apply the NixOS configuration by running the following command:
+```
+nixos-rebuild switch --flake .#<hostname>
+```
+where <hostname> is either `ctrl` or `node-1`, `node-2`, etc
 
 
 
@@ -21,7 +37,8 @@ design experiment here
 
 
 ## Assumptions and Potential Drawbacks
-
+NixOS is considered hard and complicated
+Hard if software/tool not already packaged
 
 
 ## Sources
@@ -31,7 +48,8 @@ design experiment here
 [ansible-convergance]: https://flyingcircus.io/en/about-us/blog-news/details-view/thoughts-on-systems-management-methods
 [2]: Kauhaus, Christian. (2016). [*Thoughts on Systems Management Methods*](https://flyingcircus.io/en/about-us/blog-news/details-view/thoughts-on-systems-management-methods). Flying Circus.
 
-NixOS paper: https://edolstra.github.io/pubs/nixos-jfp-final.pdf
+[nixos-paper]: https://edolstra.github.io/pubs/nixos-jfp-final.pdf
+[3]: Dolstra, Eelco and Löh, Andres and Pierron, Nicolas (2016). [*NixOS: A Purely Functional Linux Distribution*](https://edolstra.github.io/pubs/nixos-jfp-final.pdf).
 
 NixOS VS Ansible: https://discourse.nixos.org/t/nixos-vs-ansible/16757
 
