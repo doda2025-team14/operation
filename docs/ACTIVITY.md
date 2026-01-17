@@ -299,6 +299,14 @@ TEXT
 
 The update of `version.txt` wasn't working correctly because the `Dockerfile` wasn't using the new `build-arg` passed from the workflow.
 
+- https://github.com/doda2025-team14/app/pull/25
+- https://github.com/doda2025-team14/operation/pull/121
+
+Centralized everything into an .env for application level variables and in values.yml for playbook related parameters. Removed Dockerfile.local as it was dead code.
+
+- https://github.com/doda2025-team14/operation/pull/115
+
+Added self-signed TLS certificates to the NGINX ingress.
 
 ## Week 9
 
