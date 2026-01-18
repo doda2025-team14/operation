@@ -36,7 +36,7 @@ spec:
         context: GATEWAY
         routeConfiguration:
           vhost:
-            name: "team14.local:80" # Match the host and port exactly
+            name: "istio.team14.local:80" # Match the host and port exactly
       patch:
         operation: MERGE
         value:
