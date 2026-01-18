@@ -10,8 +10,8 @@ data:
         value: "/sms/"
         rate_limit:
           unit: minute
-          requests_per_unit: 5
+          requests_per_unit: 10
       - key: PATH
         rate_limit:
           unit: minute
-          requests_per_unit: 10
+          requests_per_unit: 20
