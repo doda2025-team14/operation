@@ -6,7 +6,11 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
-  ingressClassName: nginx  
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - dashboard.local
+    secretName: ingress-tls
   rules:
   - host: dashboard.local
     http:

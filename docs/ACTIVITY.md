@@ -169,9 +169,7 @@ Helped setting up traffic monitoring using Istio.
 ## Week 6
 
 ### Boris
-LINK
-
-TEXT
+N/A
 
 ### Elvira
 LINK
@@ -212,9 +210,10 @@ I have fixed some bugs regarding image tagging in the release workflows of app a
 ## Week 7
 
 ### Boris
-LINK
+- https://github.com/doda2025-team14/operation/pull/112
+- https://github.com/doda2025-team14/operation/pull/113
 
-TEXT
+This week, I updated the docker-compose to include caching the model and started working on improving the routing to v2 version
 
 ### Elvira
 LINK
@@ -284,9 +283,10 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+- https://github.com/doda2025-team14/operation/pull/122
+- https://github.com/doda2025-team14/operation/pull/116
 
-WTEXT
+Created proposal for project extension: declarative provisioning using NixOS instead of Ansible. Explained motivation for chosen proposal as well as benefits of NixOS and justified significance to the project. Also improved deployment instructions in README.md and created `deploy-to-vms.sh` script to simplify the deployment process.
 
 ### Jeffrey
 LINK
@@ -294,13 +294,19 @@ LINK
 TEXT
 
 ### Alessandro
-LINK
 
-TEXT
+- https://github.com/doda2025-team14/model-service/pull/25
 
+The update of `version.txt` wasn't working correctly because the `Dockerfile` wasn't using the new `build-arg` passed from the workflow.
 
+- https://github.com/doda2025-team14/app/pull/25
+- https://github.com/doda2025-team14/operation/pull/121
 
+Centralized everything into an .env for application level variables and in values.yml for playbook related parameters. Removed Dockerfile.local as it was dead code.
 
+- https://github.com/doda2025-team14/operation/pull/115
+
+Added self-signed TLS certificates to the NGINX ingress.
 
 ## Week 9
 
