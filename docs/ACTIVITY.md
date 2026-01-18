@@ -233,9 +233,9 @@ TEXT
 Worked on implementation and documentation for continuous experimentation. Added caching to model-service as part of experiment. Created new endpoint for viewing cache statistics. Modified /sms endpoint to set header for enabling/disabling caching. Made caching an experimental feature by setting environment variable for canary app deployment.
 
 ### Jeffrey
-LINK
+- https://github.com/doda2025-team14/operation/pull/97
 
-TEXT
+Continued working on this. Used a lot of the time to understand what was the issue with the rate limiting 
 
 ### Alessandro
 
@@ -289,9 +289,9 @@ TEXT
 Created proposal for project extension: declarative provisioning using NixOS instead of Ansible. Explained motivation for chosen proposal as well as benefits of NixOS and justified significance to the project. Also improved deployment instructions in README.md and created `deploy-to-vms.sh` script to simplify the deployment process.
 
 ### Jeffrey
-LINK
+- https://github.com/doda2025-team14/operation/pull/97
 
-TEXT
+Finalised the rate limiting pull request
 
 ### Alessandro
 
