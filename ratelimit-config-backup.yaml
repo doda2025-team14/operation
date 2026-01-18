@@ -1,0 +1,20 @@
+apiVersion: v1
+data:
+  config.yaml: |
+    domain: my-ratelimit
+    descriptors:
+    - key: PATH
+        value: sms
+        rate_limit:
+          unit: minute
+          requests_per_unit: 5
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"config.yaml":"domain: my-ratelimit\ndescriptors:\n- key: PATH\n    value: sms\n    rate_limit:\n      unit: minute\n      requests_per_unit: 5\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"ratelimit-config","namespace":"istio-system"}}
+  creationTimestamp: "2026-01-13T00:13:49Z"
+  name: ratelimit-config
+  namespace: istio-system
+  resourceVersion: "4175"
+  uid: 704dbd2e-109c-46c0-95f7-637aeeef53ea
