@@ -30,9 +30,6 @@ This document details the architectural topology, traffic routing strategies, an
   - [6. Developer Reference](#6-developer-reference)
     - [DNS Setup](#dns-setup)
     - [Endpoints](#endpoints)
-      - [Application API Endpoints](#application-api-endpoints)
-    - [Configuration Management](#configuration-management)
-      - [Canary Weight Configuration](#canary-weight-configuration)
       - [Secrets Management](#secrets-management)
 
 ---
@@ -179,7 +176,7 @@ sequenceDiagram
     S->>A: Forward request
     A->>M: HTTP POST /predict (no caching)
     M-->>A: {"result": "spam/ham"}
-    A-->>N: JSON response
+    A-->>N: HTTP response
     N-->>U: HTTP response
 ```
 
