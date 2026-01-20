@@ -1,16 +1,23 @@
 services:
   model-service:
-    image: ghcr.io/doda2025-team14/model-service:latest
+    image: ${MODEL_SERVICE_IMAGE_REPO}:${MODEL_SERVICE_IMAGE_TAG}
     restart: always
+    environment:
+      - MODEL_DIR=/app/model_files
+      - MODEL_URL=${MODEL_URL}
+      - APP_PORT=${MODEL_SERVICE_PORT}
+    volumes:
+      - model-files:/app/model_files
 
   app:
-    image: ghcr.io/doda2025-team14/app:latest
+    image: ${APP_IMAGE_REPO}:${APP_IMAGE_TAG}
     restart: always
     ports:
-      - "${HOST_PORT:-8080}:8080"
-
+      - "${HOST_PORT}:${APP_PORT}"
     environment:
-      - MODEL_HOST=http://model-service:8081
-  
+      - MODEL_HOST=${MODEL_HOST}
+      - SERVER_PORT=${APP_PORT}
+      - ENABLE_CACHE=${ENABLE_CACHE}
 
-    
+volumes:
+  model-files:

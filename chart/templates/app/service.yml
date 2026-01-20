@@ -5,11 +5,11 @@ metadata:
   labels:
     app: app
 spec:
-  type: ClusterIP         
+  type: {{ .Values.app.service.type }}
   selector:
     app: app
   ports:
     - name: http
       protocol: TCP
-      port: 8080          
-      targetPort: 8080
+      port: {{ .Values.app.service.port }}
+      targetPort: {{ .Values.app.service.port }}
