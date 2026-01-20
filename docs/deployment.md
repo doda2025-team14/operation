@@ -127,7 +127,7 @@ flowchart TB
     AppV2 --> ModelV2
     
     %% Monitoring Connections
-    Prometheus -.->|Scrape| AppV1 & AppV2 & ModelV1 & ModelV2
+    Prometheus -.->|Scrape| AppV1 & AppV2 & ModelV2
     Prometheus --> Grafana
 
     style AppV1 fill:#4CAF50,color:#fff
@@ -298,11 +298,14 @@ The deployment is managed via Helm. Below is the relationship between Kubernetes
 
 ```mermaid
 flowchart TB
+  
+
     subgraph K8s["Standard Kubernetes"]
+        Ing[Nginx Ingress]
+        SvcIngress["Stable Service"]
+        SvcIstio["Istio Service"]
         DepV1[Deployment v1]
         DepV2[Deployment v2]
-        Svc[Service]
-        Ing[Nginx Ingress]
         CM[ConfigMap]
         SM[ServiceMonitor]
     end
@@ -313,19 +316,23 @@ flowchart TB
         DR[DestinationRule]
     end
 
-    %% Relationships
-    DepV1 & DepV2 --> Svc
-    Svc --> Ing
+    Ing --> SvcIngress --> DepV1
     
-    GW --> VS --> DR --> Svc
+    GW --> VS --> DR --> SvcIstio
+    SvcIstio --> DepV1
+    SvcIstio --> DepV2
+    
+
     SM -.-> DepV1 & DepV2
     
-    %% Styling
     style DepV1 fill:#4CAF50,color:#fff
     style DepV2 fill:#FF9800,color:#fff
+    style SvcIngress fill:#009639,color:#fff
+    style SvcIstio fill:#466BB0,color:#fff
     style GW fill:#466BB0,color:#fff
     style VS fill:#466BB0,color:#fff
     style DR fill:#466BB0,color:#fff
+    style Ing fill:#009639,color:#fff
 ```
 
 Standard Kubernetes resources like (Deployments, Services, Ingress, ConfigMap) handle the core application deployment. An Istio CRDs (Gateway, VirtualService, DestinationRule) layer on top provide traffic management without modifying the underlying Kubernetes resources.
@@ -365,13 +372,13 @@ flowchart LR
     subgraph Pods["Application Pods"]
         A1["/metrics<br/>App v1"]
         A2["/metrics<br/>App v2"]
-        M1["/metrics<br/>Model v1"]
-        M2["/metrics<br/>Model v2"]
+        M1["Model v2"]
+        M2C["/cache<br/>Model v2"]
     end
 
     subgraph Discovery["Service Discovery"]
-        SM1["ServiceMonitor<br/>(app)"]
-        SM2["ServiceMonitor<br/>(model-service)"]
+        SMA["App<br/>ServiceMonitor<br/>"]
+        SMMS["Model Service<br/>ServiceMonitor<br/>"]
     end
 
     subgraph Stack["Monitoring Stack"]
@@ -379,16 +386,17 @@ flowchart LR
         Graf["Grafana"]
     end
 
-    SM1 -.->|discover| A1 & A2
-    SM2 -.->|discover| M1 & M2
+    SMA -.->|discover| A1 & A2
+    SMMS -.->|discover| M1 & M2C
 
-    SM1 & SM2 --> Prom
+    SMA --> Prom
+    SMMS --> Prom
     Prom -->|query| Graf
 
     style A1 fill:#4CAF50,color:#fff
-    style A2 fill:#FF9800,color:#fff
     style M1 fill:#4CAF50,color:#fff
-    style M2 fill:#FF9800,color:#fff
+    style A2 fill:#FF9800,color:#fff
+    style M2C fill:#FF9800,color:#fff
 ```
 
 - **Discovery:** `ServiceMonitor` resources automatically detect pods matching the configured label selectors.
@@ -397,10 +405,13 @@ flowchart LR
 
 ### Metrics Collection
 
-Both services expose Prometheus metrics at the `/metrics` endpoint:
+The app service exposes Prometheus metrics at the `/metrics` endpoint, such as:
 
-- **App**: Request counts, latencies, classification results (ham/spam probability)
-- **Model Service**: Prediction counts, model inference times, cache statistics (v2)
+- **Counters:** Request counts by endpoint, result type, and status
+- **Gauges:** Active connections, current resource usage
+- **Histograms:** Request latency distributions with configurable buckets, response times to model service
+
+Model service exposes a `cache` metric only in the v2 canary version, this is useful for experiment monitoring. Model service performance is also observable indirectly through the app's metrics tracking downstream /predict calls.
 
 ### Dashboards
 
@@ -463,6 +474,7 @@ Then navigate to `http://localhost:3000`.
 | `/metrics` | GET | Prometheus metrics | App |
 | `/predict` | POST | ML classification (internal only) | Model Service |
 | `/version` | GET | Returns model service version | Model Service |
+| `/cache`   | GET | Cache statistics  | Model Service (only v2) |
 
 ### Configuration Management
 
