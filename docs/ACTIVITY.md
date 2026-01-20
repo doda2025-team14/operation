@@ -177,9 +177,8 @@ LINK
 TEXT
 
 ### Conall
-- https://github.com/doda2025-team14/operation/pull/103
-
-Refactored the playbooks to prevent some silent failures when deploying to vagrant VMs, added some explicit directory permissions, updated README to reflect changes.
+- https://github.com/doda2025-team14/operation/pull/100
+Implemented shared folder at mnt/shared/ in the VMs
 
 
 TEXT
@@ -221,9 +220,9 @@ LINK
 TEXT
 
 ### Conall
-LINK
+- https://github.com/doda2025-team14/operation/pull/103
 
-TEXT
+Refactored the playbooks to prevent some silent failures when deploying to vagrant VMs, added some explicit directory permissions, updated README to reflect changes.
 
 ### Wilhelm
 - https://github.com/doda2025-team14/model-service/pull/24
