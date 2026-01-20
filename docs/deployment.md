@@ -30,6 +30,9 @@ This document details the architectural topology, traffic routing strategies, an
   - [6. Developer Reference](#6-developer-reference)
     - [DNS Setup](#dns-setup)
     - [Endpoints](#endpoints)
+      - [Application API Endpoints](#application-api-endpoints)
+    - [Configuration Management](#configuration-management)
+      - [Canary Weight Configuration](#canary-weight-configuration)
       - [Secrets Management](#secrets-management)
 
 ---
@@ -436,9 +439,15 @@ kubectl get svc -n istio-system     # Istio Gateway IP
 | `localhost:3010` | Prometheus (requires port-forward) |
 | `localhost:3000` | Grafana (requires port-forward) |
 
+For Prometheus>
 ```bash
 kubectl port-forward svc/team14-release-kube-promet-prometheus -n team14 3010:9090
+```
+
+And for Grafana:
+```bash
 kubectl port-forward svc/team14-release-grafana -n team14 3000:80
+```
 
 Then navigate to `http://localhost:3000`.
 
