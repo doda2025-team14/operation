@@ -7,7 +7,7 @@ metadata:
 spec:
   ports:
   - name: redis
-    port: 6379
+    port: {{ .Values.redis.master.service.ports.redis }}
   selector:
     app: redis
 ---
@@ -16,7 +16,7 @@ kind: Deployment
 metadata:
   name: redis
 spec:
-  replicas: 1
+  replicas: {{ .Values.redis.replicaCount | default 1 }}
   selector:
     matchLabels:
       app: redis
@@ -26,12 +26,12 @@ spec:
         app: redis
     spec:
       containers:
-      - image: docker.io/redis:alpine
-        imagePullPolicy: IfNotPresent
+      - image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
+        imagePullPolicy: {{ .Values.redis.image.pullPolicy | default "IfNotPresent" }}
         name: redis
         ports:
         - name: redis
-          containerPort: 6379
+          containerPort: {{ .Values.redis.master.service.ports.redis }}
       restartPolicy: Always
       serviceAccountName: ""
 ---
@@ -44,16 +44,16 @@ metadata:
 spec:
   ports:
   - name: http-port
-    port: 8080
-    targetPort: 8080
+    port: {{ .Values.ratelimit.service.httpPort }}
+    targetPort: {{ .Values.ratelimit.service.httpPort }}
     protocol: TCP
   - name: grpc-port
-    port: 8081
-    targetPort: 8081
+    port: {{ .Values.ratelimit.service.grpcPort }}
+    targetPort: {{ .Values.ratelimit.service.grpcPort }}
     protocol: TCP
   - name: http-debug
-    port: 6070
-    targetPort: 6070
+    port: {{ .Values.ratelimit.service.debugPort }}
+    targetPort: {{ .Values.ratelimit.service.debugPort }}
     protocol: TCP
   selector:
     app: ratelimit
@@ -63,51 +63,51 @@ kind: Deployment
 metadata:
   name: ratelimit
 spec:
-  replicas: 1
+  replicas: {{ .Values.ratelimit.replicaCount }}
   selector:
     matchLabels:
       app: ratelimit
   strategy:
-    type: Recreate
+    type: {{ .Values.ratelimit.strategy.type | default "Recreate" }}
   template:
     metadata:
       labels:
         app: ratelimit
     spec:
       containers:
-      - image: docker.io/envoyproxy/ratelimit:30a4ce1a # 2024/08/01
-        imagePullPolicy: IfNotPresent
+      - image: {{ .Values.ratelimit.image.repository }}:{{ .Values.ratelimit.image.tag }}
+        imagePullPolicy: {{ .Values.ratelimit.image.pullPolicy }}
         name: ratelimit
-        command: ["/bin/ratelimit"]
+        command: {{ toJson .Values.ratelimit.command }}
         env:
         - name: LOG_LEVEL
-          value: debug
+          value: {{ .Values.ratelimit.env.LOG_LEVEL }}
         - name: REDIS_SOCKET_TYPE
-          value: tcp
+          value: {{ .Values.ratelimit.env.REDIS_SOCKET_TYPE }}
         - name: REDIS_URL
-          value: redis:6379
+          value: {{ .Values.ratelimit.env.REDIS_URL }}
         - name: USE_STATSD
-          value: "false"
+          value: "{{ .Values.ratelimit.env.USE_STATSD }}"
         - name: RUNTIME_ROOT
-          value: /data
+          value: {{ .Values.ratelimit.env.RUNTIME_ROOT }}
         - name: RUNTIME_SUBDIRECTORY
-          value: ratelimit
+          value: {{ .Values.ratelimit.env.RUNTIME_SUBDIRECTORY }}
         - name: RUNTIME_WATCH_ROOT
-          value: "false"
+          value: "{{ .Values.ratelimit.env.RUNTIME_WATCH_ROOT }}"
         - name: RUNTIME_IGNOREDOTFILES
-          value: "true"
+          value: "{{ .Values.ratelimit.env.RUNTIME_IGNOREDOTFILES }}"
         - name: HOST
-          value: "::"
+          value: "{{ .Values.ratelimit.env.HOST }}"
         - name: GRPC_HOST
-          value: "::"
+          value: "{{ .Values.ratelimit.env.GRPC_HOST }}"
         ports:
-        - containerPort: 8080
-        - containerPort: 8081
-        - containerPort: 6070
+        - containerPort: {{ .Values.ratelimit.service.httpPort }}
+        - containerPort: {{ .Values.ratelimit.service.grpcPort }}
+        - containerPort: {{ .Values.ratelimit.service.debugPort }}
         volumeMounts:
         - name: config-volume
           mountPath: /data/ratelimit/config
       volumes:
       - name: config-volume
         configMap:
-          name: ratelimit-config
+          name: {{ .Values.ratelimit.config.configMapName }}
