@@ -436,11 +436,12 @@ kubectl get svc -n istio-system     # Istio Gateway IP
 | `http://istio.team14.local/sms/` | **A/B Test UI** (90% v1 / 10% v2) |
 | `http://canary.team14.local/sms/` | **Canary UI** (always v2) |
 | `https://dashboard.local` | Kubernetes Dashboard (TLS) |
+| `localhost:3010` | Prometheus (requires port-forward) |
 | `localhost:3000` | Grafana (requires port-forward) |
 
 ```bash
-kubectl port-forward svc/prometheus-grafana -n team14 3000:80
-```
+kubectl port-forward svc/team14-release-kube-promet-prometheus -n team14 3010:9090
+kubectl port-forward svc/team14-release-grafana -n team14 3000:80
 
 Then navigate to `http://localhost:3000`.
 
