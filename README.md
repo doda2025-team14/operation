@@ -16,7 +16,7 @@ You are currently in the `operation` repository which acts as a central hub from
 
 | Name                    | GitHub Username      | Student Number | Email                                 |
 |-------------------------|----------------------|----------------|---------------------------------------|
-| Boris Annink            | Borito185            |                | B.R.M.Annink@student.tudelft.nl       |
+| Boris Annink            | Borito185            | 5591147        | B.R.M.Annink@student.tudelft.nl       |
 | Conall Lynch            | conalllynch2015-a11y | 6182488        | C.J.Lynch@student.tudelft.nl          |
 | Wilhelm Marcu           | wmarcu               | 5245788        | W.P.A.Marcu@student.tudelft.nl        |
 | Jeffrey Meerovici Goryn | jmeerovici           |                | J.G.MeeroviciGoryn@student.tudelft.nl |
