@@ -347,7 +347,7 @@ Services communicate within the cluster using Kubernetes DNS:
 
 | From | To | URL | Protocol |
 |------|----|-----|----------|
-| App | Model Service | `http://model-service:8081/predict` | HTTP/JSON |
+| App | Model Service | `http://model-service:8081/predict` | HTTP |
 | Prometheus | App | `http://app:8080/metrics` | HTTP |
 | Prometheus | Model Service | `http://model-service:8081/metrics` | HTTP |
 | Prometheus | Model Service | `http://model-service:8081/cache` | HTTP |
