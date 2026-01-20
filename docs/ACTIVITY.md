@@ -267,9 +267,9 @@ Added multi-architecture builds to the release flow of app.
 ## Week 8
 
 ### Boris
-LINK
+- https://github.com/doda2025-team14/operation/pull/113
 
-TEXT
+Finished working on improving the routing and started with fixing the prometheus connection to the other services and adding the metrics of the experimental version to the grafana.
 
 ### Elvira
 LINK
@@ -310,9 +310,7 @@ Added self-signed TLS certificates to the NGINX ingress.
 ## Week 9
 
 ### Boris
-LINK
 
-TEXT
 
 ### Elvira
 LINK
