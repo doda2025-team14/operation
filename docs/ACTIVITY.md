@@ -333,6 +333,6 @@ LINK
 TEXT
 
 ### Alessandro
-LINK
+- https://github.com/doda2025-team14/operation/pull/126
 
-TEXT
+Added deployment documentation.
