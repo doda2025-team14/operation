@@ -165,22 +165,24 @@ Users on `team14.local` are guaranteed a consistent experience without experimen
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant N as Nginx Ingress
+    participant N as Nginx
     participant S as App Service
-    participant A as App v1 Pod
-    participant M as Model Service v1
+    participant A as App v1
+    participant M as Model v1
 
-    U->>N: HTTP GET /sms/ (team14.local)
-    N->>S: Route to app:8080
-    S->>A: Load balance to v1 pod
-    Note over A: User submits SMS
-    U->>N: HTTP POST /sms/ {"sms": "..."}
-    N->>S: Route to app:8080
-    S->>A: Forward request
-    A->>M: HTTP POST /predict (no caching)
-    M-->>A: {"result": "spam/ham"}
-    A-->>N: HTTP response
-    N-->>U: HTTP response
+    U->>N: GET /sms/
+    N->>S: Route
+    S->>A: Forward
+    A-->>U: HTML page
+    
+    Note over U: Submits SMS form
+    
+    U->>N: POST /sms/
+    N->>S: Route
+    S->>A: Forward
+    A->>M: POST /predict
+    M-->>A: Prediction
+    A-->>U: Response
 ```
 
 
