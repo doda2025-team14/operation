@@ -3,7 +3,7 @@
 ## Motivation
 Infrastructure as Code (IaC) is considered an important aspect of release engineering for achieving consistent and reproducible deployments. Our project uses IaC throughout, ranging from specifying Kubernetes manifests and Helm charts, to defining release workflows and provisioning VMs with Vagrant and Ansible. Among these tools, Ansible is the only one that follows an imperative IoC approach, which is inconsistent with the declarative nature of the rest of our infrastructure. Imperative IaC, in general, tends to be less predictable and more error-prone than declarative approaches, since changes are applied sequentially rather than defined in terms of a desired end state [[1]][imp-vs-dec-iac].
 
-A recurring pain point throughout the development process was extending the Ansible playbooks to configure additional software and environment variables on the provisioned VMs. Incrementally updating the playbooks proved to be a slow and tedious process, as adding a new feature required sitting through the provisioning process, up to five minutes, to reach a state from which development could begin. Furthermore, Ansible does not update the VMs in an atomic way, meaning that when a playbook failed midway, the VM was left in an inconsistent, partially configured state. Since there is no rollback mechanism, recovering from such a situation often required deleting the VM and starting over which, wasted time and disrupted development workflows. Moreover, Ansible does not provide true reproducibility due to its imperative nature; it attempts to converge on a desired state but does not actually guarantee congruence [[2]][ansible-convergance]. Collectively, these limitations make developing, maintaining, and iterating on Ansible playbooks cumbersome, time-consuming, and prone to human error.
+A recurring pain point throughout the development process was extending the Ansible playbooks to configure additional software and environment variables on the provisioned VMs. Incrementally updating the playbooks proved to be a slow and tedious process, as adding a new feature required sitting through the provisioning process, up to five minutes, to reach a state from which development could begin. Furthermore, Ansible does not update the VMs in an atomic way, meaning that when a playbook failed midway, the VM was left in an inconsistent, partially configured state (see *Figure 1*). Since there is no rollback mechanism, recovering from such a situation often required deleting the VM and starting over which, wasted time and disrupted development workflows. Moreover, Ansible does not provide true reproducibility due to its imperative nature; it attempts to converge on a desired state but does not actually guarantee congruence [[2]][ansible-convergance]. Collectively, these limitations make developing, maintaining, and iterating on Ansible playbooks cumbersome, time-consuming, and prone to human error.
 
 ```mermaid
     flowchart TD
@@ -17,25 +17,12 @@ A recurring pain point throughout the development process was extending the Ansi
 ```
 *Figure 1: High Level Diagram of Ansible Updates, There is Always the Possibility of a Quiet Failure*
 
-```mermaid
-    graph LR
-    Playbook --> Role1
-    Playbook --> Role2
-    Role1 --> TaskA
-    Role1 --> TaskB
-    Role2 --> TaskC
-    TaskB --> Conditional1
-    TaskC --> Conditional2
-```
-*Figure 2: Anisble's Imperative Logic Can Lead to Reproducibility Issues*
-
-
 
 
 ## Proposed Solution: NixOS
 To address these shortcomings, we propose replacing the Ubuntu VMs and Ansible playbooks with NixOS VMs and a declarative Nix configuration. NixOS is a Linux distribution built on the Nix package manager which takes a purely functional and declarative approach to system configuration [[3]]. All system details, including permissions, network settings, packages, and program configuration, can be declared and applied all at once without needing to worry about the exact order of steps required to achieve the desired state. This provides a layer of abstraction for the entire provisioning process with stronger guarantees about correctness and reproducibility.
 
-Furthermore, NixOS is an immutable operating system meaning that changes to the system configuration do not mutate the existing state but instead produce a new snapshot of the system called a 'generation'. This process is entirely atomic: either Nix can successfully evaluate the configuration and apply it immediately, or evaluation fails and the system remains in the previous working version. Consequently, the problem of Ansible sometimes producing a partially configured VM is no longer a concern. Each system generation is also saved which provides an efficient rollback mechanism.
+Furthermore, NixOS is an immutable operating system meaning that changes to the system configuration do not mutate the existing state but instead produce a new snapshot of the system called a 'generation'. This process is entirely atomic: either Nix can successfully evaluate the configuration and apply it immediately, or evaluation fails and the system remains in the previous working version (see *Figure 2*). Consequently, the problem of Ansible sometimes producing a partially configured VM is no longer a concern. Each system generation is also saved which provides an efficient rollback mechanism.
 
 
 ```mermaid
@@ -47,22 +34,8 @@ flowchart TD
 
     B -->|Failure| F[Previous Generation Remains Active]
 ```
-*Figure 3: NixOS Updates VMs Atomically, Preventing Quiet Failures Seen With Ansible*
+*Figure 2: NixOS Updates VMs Atomically, Preventing Quiet Failures Seen With Ansible*
 
-```mermaid
-graph LR
-    Flake --> CtrlConfig[ctrl.nix]
-    Flake --> NodeConfig[node.nix]
-
-    CtrlConfig --> Packages
-    CtrlConfig --> Services
-    CtrlConfig --> Networking
-
-    NodeConfig --> Packages
-    NodeConfig --> Services
-    NodeConfig --> Networking
-```
-*Figure 4: NixOS has explicitly Defined Structure, Leading to More Consistent Behaviour During Development*
 
 ## Refactoring Strategy
 We present a list of tasks required to switch from Ansible to NixOS:

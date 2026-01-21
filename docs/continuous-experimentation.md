@@ -4,11 +4,11 @@
 
 The current implementation of the `model-service` processes every incoming prediction request by loading the machine learning model and performing inference. While this approach works for a small scale deployment, the problem is that it may lead to unnecessary computational load and increased response latency. This becomes even more of a problem when the system needs to deal with more concurrent users.
 
-A solution to this problem is to introduce a caching mechanism for SMS messages and their classification in order to avoid having to perform repeated inferance for common messages. The goal of this experiment is to evaluate the impact of a simple in-memory cache on latency and resource consumption.
+A solution to this problem is to introduce a caching mechanism for SMS messages and their classification (See *Figure 1*) in order to avoid having to perform repeated inferance for common messages. The goal of this experiment is to evaluate the impact of a simple in-memory cache on latency and resource consumption.
 
 ## Changes Made
 
-The actual caching is done at the `model-service` level in the `serve_model.py` file. The data structure used to implement the cache is a Python dictionary. The cache size and entry time-to-live is configurable with the `CACHE_MAX_SIZE` (default 1000) and `CACHE_TTL_SECONDS` (default 3600) respectively. The cache uses a FIFO eviction policy in the case that requests come in faster than they expire.
+The actual caching is done at the `model-service` level in the `serve_model.py` file. The data structure used to implement the cache is a Python dictionary. The cache size and entry time-to-live is configurable with the `CACHE_MAX_SIZE` (default 1000) and `CACHE_TTL_SECONDS` (default 3600) respectively. The cache uses a FIFO eviction policy in the case that requests come in faster than they expire (See *Figure 2*).
 
 To help perform the caching, some new functions are introduced:
 - `get_cache_key`: Performs SHA-256 hashing on the SMS message contents to derive the key used in the cache.
