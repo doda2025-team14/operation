@@ -106,6 +106,16 @@ We provide the necessary configuration to setup a cluster for the application to
 
 We provide a script `setup-minikube.sh` for ease of use which performs the above instructions.
 
+#### Flowchart
+```mermaid
+subgraph Minikube
+   A1[Check prerequisites] --> A2[Delete cluster if present]
+   A2 --> A3[Start cluster]
+   A3 --> A4[Enable ingress]
+   A4 --> A5[Install Istio]
+   A5 --> A6[Deploy app with Helm]
+end
+```
 ### Provisioning Virtual Machines
 
 #### Prerequisites
@@ -151,6 +161,8 @@ We provide pre-built images which you can use to run the application. The availa
 #### Instructions
 
  To start the application, run the following command `docker compose up -d`.
+
+#### Flowchart
 
  ```mermaid
 flowchart TD
@@ -210,7 +222,17 @@ If you are running a provisioned VM cluster, there are a few extra steps before 
 
 We provide a script `deploy-to-vms.sh` for ease of use which performs the above instructions.
 
-
+#### Flowchart
+```mermaid
+subgraph KubernetesVMs
+   B1[Check prerequisites] --> B2[Optional: Add SSH key]
+   B2 --> B3[Run vagrant up]
+   B3 --> B4[Run finalization playbook]
+   B4 --> B5[Export/merge KUBECONFIG]
+   B5 --> B6[Set kubectl context]
+   B6 --> B7[Deploy app with Helm]
+end
+```
 
 ## Services and Endpoints
 
