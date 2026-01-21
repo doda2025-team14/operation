@@ -31,9 +31,11 @@ We hypothesise that implementing caching for messages and their predictions will
 A simple set of one-sided hypothesis tests will be preformed on the data gathered from our two metrics. We will assess these hypotheses to a 95% degree of confidence (2 standard deviations above the mean). 
 
 The Null and Alternate Hypotheses for the latency claims are:
-$$H_0: \mu_(cached) > 0.8 * \mu_(original)$$
-$$H_A: \mu_(cached) \leq 0.8* \mu_(original)$$
+
+$$H_0: \mu_{cached} > 0.8 * \mu_{original}$$
+$$H_A: \mu_{cached} \leq 0.8* \mu_{original}$$
 
 The Null and Alternate Hypotheses for the CPU claims are:
-$$H_0: \mu_(cached) >  \mu_(original)$$
-$$H_A: \mu_(cached) \leq \mu_(original)$$
+
+$$H_0: \mu_{cached} >  \mu_{original}$$
+$$H_A: \mu_{cached} \leq \mu_{original}$$
