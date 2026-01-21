@@ -48,5 +48,11 @@ spec:
           rate_limits:
             - actions:
                 - request_headers:
-                    header_name: "{{ .Values.istio.ratelimit.descriptor.headerName }}"
-                    descriptor_key: "{{ .Values.istio.ratelimit.descriptor.key }}"
+                    header_name: "{{ .Values.istio.ratelimit.descriptor.path.headerName }}"
+                    descriptor_key: "{{ .Values.istio.ratelimit.descriptor.path.key }}"
+                    
+                - request_headers:
+                    header_name: "{{ .Values.istio.ratelimit.descriptor.user.headerName }}"
+                    descriptor_key: "{{ .Values.istio.ratelimit.descriptor.user.key }}"
+
+                    

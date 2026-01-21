@@ -121,8 +121,13 @@ istio:
       port: 80
 
     descriptor:
-      headerName: ":path"
-      key: "PATH"
+      path:
+        headerName: ":path"
+        key: "PATH"
+      
+      user:
+        headerName: "X-User-Id"
+        key: "USER"
     
 
 ratelimit:
@@ -178,9 +183,11 @@ ratelimit:
 
       - key: PATH
         value: "/sms/"
-        rateLimit:
-          unit: minute
-          requestsPerUnit: 10
+        descriptors:
+          - key: USER
+            rateLimit:
+              unit: minute
+              requestsPerUnit: 10
   
 redis:
   enabled: true

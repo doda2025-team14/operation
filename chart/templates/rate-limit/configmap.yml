@@ -13,7 +13,19 @@ data:
 {{- if .value }}
         value: "{{ .value }}"
 {{- end }}
+
+{{- if .descriptors }}
+        descriptors:
+{{- range .descriptors }}
+          - key: {{ .key }}
+            rate_limit:
+              unit: {{ .rateLimit.unit }}
+              requests_per_unit: {{ .rateLimit.requestsPerUnit }}
+{{- end }}
+
+{{- else }}
         rate_limit:
           unit: {{ .rateLimit.unit }}
           requests_per_unit: {{ .rateLimit.requestsPerUnit }}
+{{- end }}
 {{- end }}
