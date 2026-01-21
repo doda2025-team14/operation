@@ -17,6 +17,18 @@ A recurring pain point throughout the development process was extending the Ansi
 ```
 *Figure 1: High Level Diagram of Ansible Updates, There is Always the Possibility of a Quiet Failure*
 
+```mermaid
+    graph LR
+    Playbook --> Role1
+    Playbook --> Role2
+    Role1 --> TaskA
+    Role1 --> TaskB
+    Role2 --> TaskC
+    TaskB --> Conditional1
+    TaskC --> Conditional2
+```
+*Figure 2: Anisble's Imperative Logic Can Lead to Reproducibility Issues*
+
 
 
 
@@ -35,9 +47,22 @@ flowchart TD
 
     B -->|Failure| F[Previous Generation Remains Active]
 ```
-*Figure 2: NixOS Updates VMs Atomically, Preventing Quiet Failures Seen With Ansible*
+*Figure 3: NixOS Updates VMs Atomically, Preventing Quiet Failures Seen With Ansible*
 
+```mermaid
+graph LR
+    Flake --> CtrlConfig[ctrl.nix]
+    Flake --> NodeConfig[node.nix]
 
+    CtrlConfig --> Packages
+    CtrlConfig --> Services
+    CtrlConfig --> Networking
+
+    NodeConfig --> Packages
+    NodeConfig --> Services
+    NodeConfig --> Networking
+```
+*Figure 4: NixOS has explicitly Defined Structure, Leading to More Consistent Behaviour During Development*
 
 ## Refactoring Strategy
 We present a list of tasks required to switch from Ansible to NixOS:
