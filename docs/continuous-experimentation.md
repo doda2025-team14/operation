@@ -28,7 +28,7 @@ We hypothesise that implementing caching for messages and their predictions will
 
 ## Decision Process
 
-A simple set of one-sided hypothesis tests will be preformed on the data gathered from our two metrics. We will assess these hypotheses to a 95% degree of confidence (2 standard deviations above the mean). As $$ n > 30 $$ for all tests we can assume our data to have a normal/Gaussian distribution as per the CLT.
+A simple set of one-sided hypothesis tests will be preformed on the data gathered from our two metrics. We will assess these hypotheses to a 95% degree of confidence (2 standard deviations above the mean). As $$n > 30$$ for all tests we can assume our data to have a normal/Gaussian distribution as per the CLT.
 
 The Null and Alternate Hypotheses for the latency claims are:
 
