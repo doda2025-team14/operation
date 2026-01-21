@@ -18,6 +18,26 @@ To help perform the caching, some new functions are introduced:
 
 The `/predict` endpoint in `model-service` is modified to use the above functions to perform caching when it is enabled. In order for caching to be enabled, the `/predict` endpoint needs to be accessed with the `X-Cache-Enabled` flag header set to `true`. The user is unable to do this manually since they cannot directly communicate with the `model-service` by default. Instead, this is handled by the modified logic in `FrontendController.java` in `app` which sets this header for all requests when the `CACHE_ENABLED` environment variable is set to `true`. This environment variable is only set in the canary version of the `app` deployment, thus allowing the caching feature to be toggled on or off for users depending on whether or not they are part of the experiment.
 
+```mermaid
+    flowchart TD
+    A[User Request] --> B[FrontendController]
+    B --> C[model-service]
+    C --> D{Cache Hit?}
+    D -->|Yes| E[Return Cached Prediction]
+    D -->|No| F[Load ML Model & Predict]
+    F --> E
+    E --> G[Send Response]
+```
+*Figure 1: Updated Experimental Request Flow Using Cache* 
+
+```mermaid
+    graph LR
+    Msg[SMS Message] --> H[SHA-256 Hash Key]
+    H --> C[Cache Dictionary]
+    C --> P[Prediction Result]
+    C -->|Evict FIFO| E[Oldest Entry Removed]
+```
+*Figure 2: Diagram of a Caching Operation* 
 ## Hypothesis
 
 We hypothesise that implementing caching for messages and their predictions will reduce the average prediction latency by at least 20% while also decreasing the overall CPU usage of the application.
