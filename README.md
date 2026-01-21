@@ -152,6 +152,14 @@ We provide pre-built images which you can use to run the application. The availa
 
  To start the application, run the following command `docker compose up -d`.
 
+ ```mermaid
+flowchart TD
+   subgraph Docker
+   C1[Check prerequisites] --> C2[Copy .env and customize]
+   C2 --> C3[Run docker compose up -d]
+end
+```
+
 ### Run using Kubernetes
 
 #### Prerequisites
