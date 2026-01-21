@@ -193,36 +193,41 @@ Users on `istio.team14.local` participate in the experiment:
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant G as Istio Gateway
+    participant G as Gateway
     participant VS as VirtualService
-    participant DR as DestinationRule
     participant A1 as App v1
     participant A2 as App v2
     participant M1 as Model v1
-    participant M2 as Model v2
+    participant M2 as Model v2 (Cache)
 
-    U->>G: HTTP GET /sms/ (istio.team14.local)
-    G->>VS: Route request based on host
+    U->>G: GET /sms/
+    G->>VS: Host routing
+    Note over VS: Set session cookie
     
-    alt 90% of traffic (stable path)
-        VS->>DR: subset: v1
-        DR->>A1: Route to stable pod
-        Note over DR: Set user-session cookie
-        A1->>M1: POST /predict (no X-Cache-Enabled header)
-        M1-->>A1: ML Prediction (always computed)
-        A1-->>U: Response (stable experience)
-    else 10% of traffic (canary path)
-        VS->>DR: subset: v2
-        DR->>A2: Route to canary pod
-        Note over DR: Set user-session cookie
-        A2->>M2: POST /predict (X-Cache-Enabled: true)
-        alt Cache Hit
-            M2-->>A2: Cached Prediction (fast)
-        else Cache Miss
-            Note over M2: Run ML model
-            M2-->>A2: New Prediction (stored in cache)
-        end
-        A2-->>U: Response (canary experience)
+    alt 90% stable
+        VS->>A1: Route to v1
+        A1-->>U: HTML page
+    else 10% canary
+        VS->>A2: Route to v2
+        A2-->>U: HTML page
+    end
+    
+    Note over U: Submits SMS form
+    
+    U->>G: POST /sms/
+    G->>VS: Cookie routing
+    
+    alt Stable path
+        VS->>A1: Forward
+        A1->>M1: POST /predict
+        M1-->>A1: Prediction
+        A1-->>U: Response
+    else Canary path
+        VS->>A2: Forward
+        A2->>M2: POST /predict
+        Note over M2: Cache hit or miss
+        M2-->>A2: Prediction
+        A2-->>U: Response
     end
 ```
 
