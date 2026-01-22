@@ -5,12 +5,12 @@ metadata:
   labels: { release: team14-release }
 spec:
   selector:
-    matchLabels: 
+    matchLabels:
       app: model-service
   podTargetLabels:
   - version
   endpoints:
     - interval: 15s
       port: http
-      path: /cache
+      path: /metrics
 
