@@ -106,17 +106,6 @@ We provide the necessary configuration to setup a cluster for the application to
 
 We provide a script `setup-minikube.sh` for ease of use which performs the above instructions.
 
-#### Flowchart
-```mermaid
-flowchart TD
-   subgraph Minikube
-      A1[Check prerequisites] --> A2[Delete cluster if present]
-      A2 --> A3[Start cluster]
-      A3 --> A4[Enable ingress]
-      A4 --> A5[Install Istio]
-      A5 --> A6[Deploy app with Helm]
-end
-```
 ### Provisioning Virtual Machines
 
 #### Prerequisites
@@ -150,8 +139,60 @@ We use Ansible playbooks to configure the VM software:
 
 ## Deploying and Running the Application
 
-We provide pre-built images which you can use to run the application. The available images, along with other packages, are published to [GitHub Packages](https://github.com/orgs/doda2025-team14/packages). The application can be run either through Docker containers or using Kubernetes.
+We provide pre-built images which you can use to run the application. The available images, along with other packages, are published to [GitHub Packages](https://github.com/orgs/doda2025-team14/packages). The workflows of these releases are shown in the *figures* below. The application can be run either through Docker containers or using Kubernetes.
 
+#### Image Release Workflows
+```mermaid
+flowchart TD
+     %% Workflow Triggers
+    subgraph TRIGGERS [Workflow Triggers]
+        TM[Push to master] 
+        TP[Pull Request events]
+        TD[Manual Dispatch]
+    end
+    TM --> B[Start Frontend Release]
+    TP --> B
+    TD --> B
+
+    %% Job
+    B --> C[Checkout Repository]
+    C -->D[Read Current Version <br>from pom.xml]
+    D --> E[Increment Patch Version <br> MAJOR.MINOR.PATCH <br>]
+    E --> F[Update pom.xml <br>Set new version]
+    F --> G[Login to GHCR <br>Using GITHUB_TOKEN]
+    G --> H[Build Docker Image]
+
+    %% Push Images
+    H --> J[Push Docker Images]
+    J --> J1[Push 'MAJOR.MINOR.PATCH' <br> tag]
+    J --> J2[Push 'latest' tag]
+```
+*Figure 1: Frontend Release Workflow*
+
+```mermaid
+flowchart TD
+    %% Workflow Trigger Region
+    subgraph TRIGGERS [Workflow Triggers]
+        TM[Push to master<br/>or pr/**] 
+        TP[Pull Request events<br/>opened, synchronized, reopened] 
+        TD[Manual Dispatch<br/>workflow_dispatch] 
+    end
+
+    %% Connect triggers to the job
+    TM --> C[Start Backend Docker Release]
+    TP --> C
+    TD --> C
+
+    %% Job steps
+
+    C --> D[Checkout Frontend Repo]
+    D --> E[Extract Version<br/>Set VERSION environment variable]
+    E --> F[Set up QEMU<br/>Docker emulator]
+    F --> G[Set up Docker Buildx<br/> w/Multi-arch build support]
+    G --> H[Login to GHCR]
+    H --> I[Build and Push Multi-arch Docker Image<br/>Tags VERSION and latest]
+```
+*Figure 2: Backend Release Workflow*
 ### Run using Docker containers
 
 #### Prerequisites
@@ -162,16 +203,6 @@ We provide pre-built images which you can use to run the application. The availa
 #### Instructions
 
  To start the application, run the following command `docker compose up -d`.
-
-#### Flowchart
-
- ```mermaid
-flowchart TD
-   subgraph Docker
-   C1[Check prerequisites] --> C2[Copy .env and customize]
-   C2 --> C3[Run docker compose up -d]
-end
-```
 
 ### Run using Kubernetes
 
@@ -223,18 +254,6 @@ If you are running a provisioned VM cluster, there are a few extra steps before 
 
 We provide a script `deploy-to-vms.sh` for ease of use which performs the above instructions.
 
-#### Flowchart
-```mermaid
-flowchart TD
-   subgraph KubernetesVMs
-      B1[Check prerequisites] --> B2[Optional: Add SSH key]
-      B2 --> B3[Run vagrant up]
-      B3 --> B4[Run finalization playbook]
-      B4 --> B5[Export/merge KUBECONFIG]
-      B5 --> B6[Set kubectl context]
-      B6 --> B7[Deploy app with Helm]
-end
-```
 
 ## Services and Endpoints
 
