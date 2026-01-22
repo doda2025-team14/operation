@@ -65,7 +65,7 @@
               "mode": "percent"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "line"
             }
           },
           "mappings": [],
@@ -78,7 +78,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 0.5
               }
             ]
           }
