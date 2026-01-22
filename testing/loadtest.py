@@ -9,7 +9,7 @@ parser.add_argument("-c", "--count", help="How much should we spam?", default=10
 parser.add_argument("-w", "--workers", default=5, type=int, help="How many workers per url")
 parser.add_argument("--skip-canary", action="store_true", help="include to not send requests to canary")
 parser.add_argument("--skip-istio", action="store_true", help="include to not send requests to istio")
-parser.add_argument("-u", "--unique", default=1000, help="configure the unique amount of messages to choose from")
+parser.add_argument("-u", "--unique", default=1000, type=int, help="configure the unique amount of messages to choose from")
 args = parser.parse_args()
 
 url1 = "http://istio.team14.local/sms/"
