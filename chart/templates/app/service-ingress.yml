@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-ingress
+  labels:
+    app: app
+spec:
+  type: {{ .Values.app.service.type }}
+  selector:
+    app: app
+    version: v1
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.app.service.port }}
+      targetPort: {{ .Values.app.service.port }}

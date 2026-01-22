@@ -177,9 +177,8 @@ LINK
 TEXT
 
 ### Conall
-- https://github.com/doda2025-team14/operation/pull/103
-
-Refactored the playbooks to prevent some silent failures when deploying to vagrant VMs, added some explicit directory permissions, updated README to reflect changes.
+- https://github.com/doda2025-team14/operation/pull/100
+Implemented shared folder at mnt/shared/ in the VMs
 
 
 TEXT
@@ -221,9 +220,9 @@ LINK
 TEXT
 
 ### Conall
-LINK
+- https://github.com/doda2025-team14/operation/pull/103
 
-TEXT
+Refactored the playbooks to prevent some silent failures when deploying to vagrant VMs, added some explicit directory permissions, updated README to reflect changes.
 
 ### Wilhelm
 - https://github.com/doda2025-team14/model-service/pull/24
@@ -233,9 +232,9 @@ TEXT
 Worked on implementation and documentation for continuous experimentation. Added caching to model-service as part of experiment. Created new endpoint for viewing cache statistics. Modified /sms endpoint to set header for enabling/disabling caching. Made caching an experimental feature by setting environment variable for canary app deployment.
 
 ### Jeffrey
-LINK
+- https://github.com/doda2025-team14/operation/pull/97
 
-TEXT
+Continued working on this. Used a lot of the time to understand what was the issue with the rate limiting 
 
 ### Alessandro
 
@@ -268,9 +267,9 @@ Added multi-architecture builds to the release flow of app.
 ## Week 8
 
 ### Boris
-LINK
+- https://github.com/doda2025-team14/operation/pull/113
 
-TEXT
+Finished working on improving the routing and started with fixing the prometheus connection to the other services and adding the metrics of the experimental version to the grafana.
 
 ### Elvira
 LINK
@@ -283,14 +282,15 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+- https://github.com/doda2025-team14/operation/pull/122
+- https://github.com/doda2025-team14/operation/pull/116
 
-WTEXT
+Created proposal for project extension: declarative provisioning using NixOS instead of Ansible. Explained motivation for chosen proposal as well as benefits of NixOS and justified significance to the project. Also improved deployment instructions in README.md and created `deploy-to-vms.sh` script to simplify the deployment process.
 
 ### Jeffrey
-LINK
+- https://github.com/doda2025-team14/operation/pull/97
 
-TEXT
+Finalised the rate limiting pull request
 
 ### Alessandro
 
@@ -298,13 +298,19 @@ TEXT
 
 The update of `version.txt` wasn't working correctly because the `Dockerfile` wasn't using the new `build-arg` passed from the workflow.
 
+- https://github.com/doda2025-team14/app/pull/25
+- https://github.com/doda2025-team14/operation/pull/121
+
+Centralized everything into an .env for application level variables and in values.yml for playbook related parameters. Removed Dockerfile.local as it was dead code.
+
+- https://github.com/doda2025-team14/operation/pull/115
+
+Added self-signed TLS certificates to the NGINX ingress.
 
 ## Week 9
 
 ### Boris
-LINK
 
-TEXT
 
 ### Elvira
 LINK
@@ -327,6 +333,6 @@ LINK
 TEXT
 
 ### Alessandro
-LINK
+- https://github.com/doda2025-team14/operation/pull/126
 
-TEXT
+Added deployment documentation.
