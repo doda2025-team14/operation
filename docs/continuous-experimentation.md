@@ -4,11 +4,11 @@
 
 The current implementation of the `model-service` processes every incoming prediction request by loading the machine learning model and performing inference. While this approach works for a small scale deployment, the problem is that it may lead to unnecessary computational load and increased response latency. This becomes even more of a problem when the system needs to deal with more concurrent users.
 
-A solution to this problem is to introduce a caching mechanism for SMS messages and their classification in order to avoid having to perform repeated inferance for common messages. The goal of this experiment is to evaluate the impact of a simple in-memory cache on latency and resource consumption.
+A solution to this problem is to introduce a caching mechanism for SMS messages and their classification (See *Figure 1*) in order to avoid having to perform repeated inferance for common messages. The goal of this experiment is to evaluate the impact of a simple in-memory cache on latency and resource consumption.
 
 ## Changes Made
 
-The actual caching is done at the `model-service` level in the `serve_model.py` file. The data structure used to implement the cache is a Python dictionary. The cache size and entry time-to-live is configurable with the `CACHE_MAX_SIZE` (default 1000) and `CACHE_TTL_SECONDS` (default 3600) respectively. The cache uses a FIFO eviction policy in the case that requests come in faster than they expire.
+The actual caching is done at the `model-service` level in the `serve_model.py` file. The data structure used to implement the cache is a Python dictionary. The cache size and entry time-to-live is configurable with the `CACHE_MAX_SIZE` (default 1000) and `CACHE_TTL_SECONDS` (default 3600) respectively. The cache uses a FIFO eviction policy in the case that requests come in faster than they expire (See *Figure 2*).
 
 To help perform the caching, some new functions are introduced:
 - `get_cache_key`: Performs SHA-256 hashing on the SMS message contents to derive the key used in the cache.
@@ -18,6 +18,26 @@ To help perform the caching, some new functions are introduced:
 
 The `/predict` endpoint in `model-service` is modified to use the above functions to perform caching when it is enabled. In order for caching to be enabled, the `/predict` endpoint needs to be accessed with the `X-Cache-Enabled` flag header set to `true`. The user is unable to do this manually since they cannot directly communicate with the `model-service` by default. Instead, this is handled by the modified logic in `FrontendController.java` in `app` which sets this header for all requests when the `CACHE_ENABLED` environment variable is set to `true`. This environment variable is only set in the canary version of the `app` deployment, thus allowing the caching feature to be toggled on or off for users depending on whether or not they are part of the experiment.
 
+```mermaid
+    flowchart TD
+    A[User Request] --> B[FrontendController]
+    B --> C[model-service]
+    C --> D{Cache Hit?}
+    D -->|Yes| E[Return Cached Prediction]
+    D -->|No| F[Load ML Model & Predict]
+    F --> E
+    E --> G[Send Response]
+```
+*Figure 1: Updated Experimental Request Flow Using Cache* 
+
+```mermaid
+    graph LR
+    Msg[SMS Message] --> H[SHA-256 Hash Key]
+    H --> C[Cache Dictionary]
+    C --> P[Prediction Result]
+    C -->|Evict FIFO| E[Oldest Entry Removed]
+```
+*Figure 2: Diagram of a Caching Operation* 
 ## Hypothesis
 
 We hypothesise that implementing caching for messages and their predictions will reduce the average prediction latency by at least 20% while also decreasing the overall CPU usage of the application.
