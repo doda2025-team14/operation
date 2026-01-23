@@ -323,9 +323,10 @@ LINK
 TEXT
 
 ### Wilhelm
-LINK
+- https://github.com/doda2025-team14/operation/pull/128
+- https://github.com/doda2025-team14/operation/pull/133
 
-WTEXT
+Fixed bug involving ingress incorrectly routing traffic to canary deployment, added screenshots of visualisation to `continuous-experimentation.md`, worked on slides for the final presentation.
 
 ### Jeffrey
 LINK
