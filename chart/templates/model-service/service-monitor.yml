@@ -2,10 +2,15 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: model-service-monitor
-  labels: { release: my-release }
+  labels: { release: team14-release }
 spec:
   selector:
-    matchLabels: { app: model-service }
+    matchLabels:
+      app: model-service
   podTargetLabels:
   - version
-  endpoints: [ { interval: 15s } ]
+  endpoints:
+    - interval: 15s
+      port: http
+      path: /metrics
+
