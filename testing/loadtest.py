@@ -7,12 +7,12 @@ from pathlib import Path
 parser = ArgumentParser()
 parser.add_argument("-c", "--count", help="How much should we spam?", default=1000, type=int)
 parser.add_argument("-w", "--workers", default=5, type=int, help="How many workers per url")
-parser.add_argument("--skip-canary", action="store_true", help="include to not send requests to canary")
-parser.add_argument("--skip-istio", action="store_true", help="include to not send requests to istio")
+parser.add_argument("--skip-v1", action="store_true", help="include to not send requests to v2")
+parser.add_argument("--skip-v2", action="store_true", help="include to not send requests to v1")
 parser.add_argument("-u", "--unique", default=1000, type=int, help="configure the unique amount of messages to choose from")
 args = parser.parse_args()
 
-url1 = "http://istio.team14.local/sms/"
+url1 = "http://team14.local/sms/"
 url2 = "http://canary.team14.local/sms/"
 count = args.count
 
@@ -41,13 +41,13 @@ def send(url):
 # Start threads for each worker
 threads = []
 for i in range(args.workers):
-  if not args.skip_istio:
+  if not args.skip_v1:
     t = threading.Thread(target=send, args=(url1,))
     threads.append(t)
-  if not args.skip_canary:    
+  if not args.skip_v2:
     t = threading.Thread(target=send, args=(url2,))
     threads.append(t)
-  
+
 print("Spamming services")
 try:
   # Start each thread

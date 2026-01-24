@@ -58,7 +58,6 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -74,7 +73,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": 0
+                "value": null
               },
               {
                 "color": "red",
@@ -105,7 +104,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "editorMode": "code",
@@ -153,7 +152,6 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -169,7 +167,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": 0
+                "value": null
               },
               {
                 "color": "red",
@@ -200,7 +198,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "editorMode": "code",
@@ -226,7 +224,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": 0
+                "value": null
               },
               {
                 "color": "red",
@@ -262,7 +260,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -290,7 +288,6 @@
             "mode": "continuous-RdYlGr"
           },
           "custom": {
-            "axisPlacement": "auto",
             "fillOpacity": 70,
             "hideFrom": {
               "legend": false,
@@ -307,7 +304,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": 0
+                "value": null
               },
               {
                 "color": "red",
@@ -341,14 +338,18 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum(increase(backend_cache_hits[$__rate_interval])) / sum(increase(backend_total_requests[$__rate_interval]))",
+          "expr": "sum(increase(backend_cache_hits[$__rate_interval]))\n/\nsum(increase(backend_total_requests[$__rate_interval]))\nand on()\n(sum(increase(backend_total_requests[$__rate_interval])) > 0)",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
           "legendFormat": "{{label_name}}",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "Cache Hits on model-service v2",
@@ -367,7 +368,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": 0
+                "value": null
               },
               {
                 "color": "red",
@@ -403,7 +404,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "editorMode": "builder",
@@ -418,7 +419,7 @@
     }
   ],
   "preload": false,
-  "schemaVersion": 42,
+  "schemaVersion": 40,
   "tags": [],
   "templating": {
     "list": []
@@ -431,5 +432,6 @@
   "timezone": "browser",
   "title": "A4",
   "uid": "adtwhlk",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }
