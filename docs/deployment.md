@@ -19,15 +19,16 @@ This document details the architectural topology, traffic routing strategies, an
       - [Sticky Sessions](#sticky-sessions)
       - [Version Consistency](#version-consistency)
       - [VirtualService Routing Logic](#virtualservice-routing-logic)
-  - [4. Kubernetes Resources](#4-kubernetes-resources)
+  - [4. Additional Use Case: Rate Limiting](#4-additional-use-case)
+  - [5. Kubernetes Resources](#5-kubernetes-resources)
     - [Resource Relationships](#resource-relationships)
     - [Pod Labeling Strategy](#pod-labeling-strategy)
     - [Internal Service Communication](#internal-service-communication)
-  - [5. Observability Stack](#5-observability-stack)
+  - [6. Observability Stack](#6-observability-stack)
     - [Architecture](#architecture)
     - [Metrics Collection](#metrics-collection)
     - [Dashboards](#dashboards)
-  - [6. Developer Reference](#6-developer-reference)
+  - [7. Developer Reference](#7-developer-reference)
     - [DNS Setup](#dns-setup)
     - [Endpoints](#endpoints)
       - [Application API Endpoints](#application-api-endpoints)
@@ -297,7 +298,61 @@ Requests to `istio.team14.local` enter the weighted routing block (90% v1, 10% v
 
 ---
 
-## 4. Kubernetes Resources
+## 4. Additional Use Case: Rate Limiting
+
+In a production environment, any public-facing service is vulnerable to excessive traffic, be it from malicious Denial of Service attacks or unintentional bugged clients triggering too many retry attempts. We decided to implement a mechanism to control the rate of incoming requests in order to prevent service degradation, resource starvation, and unecessary inflated costs is a cloud environment.
+
+We leverage Istio's service mesh capabilities along with envoy based filtering to implement rate limiting. The manifests responsible for achieving this are located in [chart/templates/rate-limit](https://github.com/doda2025-team14/operation/tree/master/chart/templates/rate-limit). The general approach is shown in the figure below:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Gateway as Istio Gateway
+    participant EnvoyFilter as EnvoyFilter
+    participant RateLimit as Rate Limit Service
+    participant Redis as Redis
+    participant App as App Service
+
+    User->>Gateway: HTTP Request<br/>GET /sms/<br/>Host: istio.team14.local<br/>X-User-Id: Alice
+    
+    Gateway->>EnvoyFilter: Apply EnvoyFilter
+    Note over EnvoyFilter: Extract Descriptors:<br/>PATH="/sms/"<br/>USER="Alice"
+    
+    EnvoyFilter->>RateLimit: Check Rate Limit<br/>[PATH="/sms/", USER="Alice"]
+    
+    RateLimit->>Redis: Get Counter<br/>Key: "ratelimit:PATH=/sms/:USER=Alice"
+    Redis-->>RateLimit: Current Count: 10
+    
+    alt Under Limit (< 10 req/min)
+        RateLimit-->>Gateway: OK (Allow)
+        Note over Gateway: Request Allowed
+        Gateway->>App: Forward Request
+        App-->>Gateway: Response (200 OK)
+        Gateway-->>User: Response (200 OK)
+        RateLimit->>Redis: Increment Counter<br/>New Count: 11
+    else Over Limit (> 10 req/min)
+        RateLimit-->>Gateway: OVER_LIMIT (Deny)
+        Note over Gateway: Request Blocked
+        Gateway-->>User: HTTP 429<br/>Too Many Requests
+    end
+```
+
+Requests to the Istio gateway first pass through an `EnvoyFilter` resource which is configured to extract specific attributes from the request to use as rate limit descriptors. In particular, it extracts the request path and the user's identity via the `X-User-Id` header, thus allowing different rate limiting rules for different users or different parts of the application. These descriptors are sent to a dedicated global rate limit service which tracks the request counts for different descriptor combinations. This rate limit service uses Redis as a backend for fast counter storage and checks if the request should be allowed or denied based on the configured limits (10 requests per user at the `/sms` endpoint, resets every time the minute changes in the system clock). The rate limit responds to the gateway with either `OK` (gateway forwards the request to `app` as usual) or with `OVER_LIMIT` (gateway rejects the request with an 429 too many requests error).
+
+To test the rate limiting functionality, the command shown below can be used. The expected result is that the first 10 requests are accepted (code 200 = OK), and the next 5 requests are rejected (code 429 = too many requests).
+
+```bash
+for i in {1..15}; do 
+  printf "%s " "$(date '+%Y-%m-%d %H:%M:%S')"
+  curl -s -o /dev/null -w "%{http_code}\n" \
+    -H "Host: istio.team14.local" \
+    -H "X-User-Id: Alice" \
+    http://istio.team14.local/sms/
+  sleep 1
+done
+```
+
+## 5. Kubernetes Resources
 
 The deployment is managed via Helm. Below is the relationship between Kubernetes native resources and Istio Custom Resource Definitions (CRDs).
 
@@ -368,7 +423,7 @@ Services communicate within the cluster using Kubernetes DNS:
 
 ---
 
-## 5. Observability Stack
+## 6. Observability Stack
 
 We utilize a Prometheus/Grafana stack to monitor the cluster.
 
@@ -430,7 +485,7 @@ Two dashboards are automatically provisioned via ConfigMap sidecar:
 
 ---
 
-## 6. Developer Reference
+## 7. Developer Reference
 
 ### DNS Setup
 
