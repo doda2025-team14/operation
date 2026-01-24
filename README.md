@@ -76,7 +76,7 @@ For Kubernetes deployments, all configuration is in `chart/values.yaml`. Overrid
 
 VM provisioning is configured at the top of the `Vagrantfile`:
 
-```ruby
+```bash
 NUM_WORKERS = 2      # Number of worker nodes
 BASE_IP = 200        # Base IP (192.168.56.BASE_IP)
 ```
@@ -141,7 +141,7 @@ We use Ansible playbooks to configure the VM software:
 
 We provide pre-built images which you can use to run the application. The available images, along with other packages, are published to [GitHub Packages](https://github.com/orgs/doda2025-team14/packages). The workflows of these releases are shown in the *figures* below. The application can be run either through Docker containers or using Kubernetes.
 
-#### Image Release Workflows
+### Image Release Workflows
 ```mermaid
 flowchart TD
      %% Workflow Triggers
@@ -202,7 +202,7 @@ flowchart TD
 
 #### Instructions
 
- To start the application, run the following command `docker compose up -d`.
+ To start the application, run the following command: `docker compose up -d`.
 
 ### Run using Kubernetes
 
@@ -252,28 +252,23 @@ If you are running a provisioned VM cluster, there are a few extra steps before 
    helm install <RELEASE_NAME> chart/ --dependency-update
    ```
 
-We provide a script `deploy-to-vms.sh` for ease of use which performs the above instructions.
-
-
-## Services and Endpoints
-
-| Service | IP | Port |
-|---------|-----|------|
-| Ingress Controller (nginx) | 192.168.56.93 | 80, 443 |
-| Istio Gateway | 192.168.56.94 | 80, 443 |
-| Kubernetes Dashboard | Via ingress | - |
-
-If Ingress is enabled, you can access the application at the configured host (default: `http://team14.local`). Ensure your `/etc/hosts` or DNS is configured to point `team14.local` to your Ingress Controller's IP.
-
-To access the Grafana dashboard:
-1. Port forward the dashboard to the localhost using: `kubectl port-forward svc/<RELEASE_NAME>-grafana 3000:80`
-2. Go to localhost:3000
-3. Login using admin and "42" as password
-4. On the left click dashboards and look for App and A4
+We provide a script `deploy-to-vms.sh` for ease of use which performs the above instructions. Make sure to run the script using `source deploy-to-vms.sh` for the export command to work correctly.
 
 
 
-## Monitoring
+## Using the Application
+
+Once the application is running, you can access it either through the ingress (`192.168.56.93`) or through the Istio gateway (`192.168.56.94`). Note: if running on minikube, the IPs will likely be different so verify which external IP is assigned using:
+```bash
+kubectl get svc -n istio-system
+kubectl get svc -n ingress-nginx
+```
+
+The root endpoint defaults to the `/sms` endpoint which where SMS messages can be submitted to the machine learning model for evaluation. For detailed documentation of all available services and endpoints, as well as the architectural design of the entire system, please see [`docs/deployment`](https://github.com/doda2025-team14/operation/blob/master/docs/deployment.md).
+
+
+
+<!-- ## Monitoring
 
 ### Metrics
 
@@ -294,5 +289,5 @@ To access the Grafana dashboard:
 
 - To add more metrics, add a collection mechanism to FrontendController and append the output String of MetricsController to export it.
 
-### Alerting
+### Alerting -->
 
