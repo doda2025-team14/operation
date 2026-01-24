@@ -116,7 +116,6 @@ istio:
     service:
       name: ratelimit
       port: 8081
-      namespace: team14
     vhost:
       port: 80
 

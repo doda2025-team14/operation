@@ -32,7 +32,7 @@ spec:
             rate_limit_service:
               grpc_service:
                 envoy_grpc:
-                  cluster_name: outbound|{{ .Values.istio.ratelimit.service.port }}||{{ .Values.istio.ratelimit.service.name }}.{{ .Values.istio.ratelimit.service.namespace }}.svc.cluster.local
+                  cluster_name: outbound|{{ .Values.istio.ratelimit.service.port }}||{{ .Values.istio.ratelimit.service.name }}.{{ .Release.Namespace }}.svc.cluster.local
               transport_api_version: V3
 
     # PATCH 2: The Action (The Instruction) - Targeting the specific host
