@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: app-monitor
-  labels: { release: team14-release }
+  labels: { release: {{ .Release.Name }} }
 spec:
   selector:
     matchLabels:

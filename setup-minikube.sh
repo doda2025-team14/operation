@@ -106,7 +106,7 @@ setup() {
     log_success "Setup completed!"
 
     echo "You can now deploy to the cluster using:"
-    echo "helm upgrade --install team14-release chart/ --namespace team14 --create-namespace --dependency-update"
+    echo "helm upgrade --install <RELEASE_NAME> chart/ --namespace <NAMESPACE> --create-namespace --dependency-update"
     echo ""
 }
 
