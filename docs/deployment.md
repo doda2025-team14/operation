@@ -459,12 +459,12 @@ kubectl get svc -n istio-system     # Istio Gateway IP
 
 For Prometheus>
 ```bash
-kubectl port-forward svc/team14-release-kube-promet-prometheus -n team14 3010:9090
+kubectl port-forward svc/<RELEASE_NAME>-kube-promet-prometheus -n <NAMESPACE> 3010:9090
 ```
 
 And for Grafana:
 ```bash
-kubectl port-forward svc/team14-release-grafana -n team14 3000:80
+kubectl port-forward svc/<RELEASE_NAME>-grafana -n <NAMESPACE> 3000:80
 ```
 
 Then navigate to `http://localhost:3000`.

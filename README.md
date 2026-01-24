@@ -217,7 +217,7 @@ We provide a helm chart in the `/chart` directory for easily deploying the appli
 
 If you are running a minikube cluster, you can deploy to it by running:
 ```bash
-helm install my-release chart/ --dependency-update
+helm install <RELEASE_NAME> chart/ --dependency-update
 ```
 
 If you are running a provisioned VM cluster, there are a few extra steps before you can deploy with helm:
@@ -249,7 +249,7 @@ If you are running a provisioned VM cluster, there are a few extra steps before 
 
 5. Deploy the application using Helm:
    ```bash
-   helm install my-release chart/ --dependency-update
+   helm install <RELEASE_NAME> chart/ --dependency-update
    ```
 
 We provide a script `deploy-to-vms.sh` for ease of use which performs the above instructions.
@@ -266,7 +266,7 @@ We provide a script `deploy-to-vms.sh` for ease of use which performs the above 
 If Ingress is enabled, you can access the application at the configured host (default: `http://team14.local`). Ensure your `/etc/hosts` or DNS is configured to point `team14.local` to your Ingress Controller's IP.
 
 To access the Grafana dashboard:
-1. Port forward the dashboard to the localhost using: `kubectl port-forward svc/my-release-grafana 3000:80`
+1. Port forward the dashboard to the localhost using: `kubectl port-forward svc/<RELEASE_NAME>-grafana 3000:80`
 2. Go to localhost:3000
 3. Login using admin and "42" as password
 4. On the left click dashboards and look for App and A4
@@ -283,7 +283,7 @@ To access the Grafana dashboard:
 -- Total Active Users
 -- Latency Distribution
 
-- Prometheus defaults to port 9090 and you can port-forward this to your local machine using `kubectl port-forward svc/my-release-kube-prometheus-prometheus 9090:9090`
+- Prometheus defaults to port 9090 and you can port-forward this to your local machine using `kubectl port-forward svc/<RELEASE_NAME>-kube-promet-prometheus 9090:9090`
 - You can query the following to get their related metrics ({} -> Optional Arguments):
 -- frontend_sms_requests_total{status="success",result="ham"}: Count of messages identified as "Ham" (i.e., not Spam)
 -- frontend_sms_requests_total{status="success",result="spam"}: Count of messages identified as "Spam"
