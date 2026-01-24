@@ -107,6 +107,99 @@ istio:
     enabled: true
     v1Weight: 90
     v2Weight: 10
+    
+  ratelimit:
+    enabled: true
+    namespace: istio-system
+    domain: ratelimit
+    failureModeDeny: true
+    service:
+      name: ratelimit
+      port: 8081
+      namespace: team14
+    vhost:
+      port: 80
+
+    descriptor:
+      headerName: ":path"
+      key: "PATH"
+    
+
+ratelimit:
+  enabled: true
+  
+  image:
+    repository: docker.io/envoyproxy/ratelimit
+    tag: 30a4ce1a
+    pullPolicy: IfNotPresent
+    
+  replicaCount: 1
+  
+  service:
+    grpcPort: 8081
+    httpPort: 8080
+    debugPort: 6070
+  
+  redis:
+    host: redis
+    port: 6379
+    
+  
+  env:
+    LOG_LEVEL: debug
+    REDIS_SOCKET_TYPE: tcp
+    REDIS_URL: redis:6379
+    USE_STATSD: "false"
+    RUNTIME_ROOT: /data
+    RUNTIME_SUBDIRECTORY: ratelimit
+    RUNTIME_WATCH_ROOT: "false"
+    RUNTIME_IGNOREDOTFILES: "true"
+    HOST: "::"
+    GRPC_HOST: "::"
+  
+  strategy:
+    type: Recreate
+
+  command:
+    - /bin/ratelimit
+
+  
+  
+  
+  config:
+    configMapName: ratelimit-config
+    domain: ratelimit
+    descriptors:
+      - key: PATH
+        value: "/"
+        rateLimit:
+          unit: minute
+          requestsPerUnit: 20
+
+      - key: PATH
+        value: "/sms/"
+        rateLimit:
+          unit: minute
+          requestsPerUnit: 10
+  
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  master:
+    service:
+      ports:
+        redis: 6379
+  image:
+    repository: docker.io/redis
+    tag: alpine
+    pullPolicy: IfNotPresent
+    
+  replicaCount: 1
+
+        
+    
 
 # Secret management
 secrets:

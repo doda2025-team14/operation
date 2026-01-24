@@ -1,0 +1,113 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  ports:
+  - name: redis
+    port: {{ .Values.redis.master.service.ports.redis }}
+  selector:
+    app: redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: {{ .Values.redis.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
+        imagePullPolicy: {{ .Values.redis.image.pullPolicy | default "IfNotPresent" }}
+        name: redis
+        ports:
+        - name: redis
+          containerPort: {{ .Values.redis.master.service.ports.redis }}
+      restartPolicy: Always
+      serviceAccountName: ""
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ratelimit
+  labels:
+    app: ratelimit
+spec:
+  ports:
+  - name: http-port
+    port: {{ .Values.ratelimit.service.httpPort }}
+    targetPort: {{ .Values.ratelimit.service.httpPort }}
+    protocol: TCP
+  - name: grpc-port
+    port: {{ .Values.ratelimit.service.grpcPort }}
+    targetPort: {{ .Values.ratelimit.service.grpcPort }}
+    protocol: TCP
+  - name: http-debug
+    port: {{ .Values.ratelimit.service.debugPort }}
+    targetPort: {{ .Values.ratelimit.service.debugPort }}
+    protocol: TCP
+  selector:
+    app: ratelimit
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ratelimit
+spec:
+  replicas: {{ .Values.ratelimit.replicaCount }}
+  selector:
+    matchLabels:
+      app: ratelimit
+  strategy:
+    type: {{ .Values.ratelimit.strategy.type | default "Recreate" }}
+  template:
+    metadata:
+      labels:
+        app: ratelimit
+    spec:
+      containers:
+      - image: {{ .Values.ratelimit.image.repository }}:{{ .Values.ratelimit.image.tag }}
+        imagePullPolicy: {{ .Values.ratelimit.image.pullPolicy }}
+        name: ratelimit
+        command: {{ toJson .Values.ratelimit.command }}
+        env:
+        - name: LOG_LEVEL
+          value: {{ .Values.ratelimit.env.LOG_LEVEL }}
+        - name: REDIS_SOCKET_TYPE
+          value: {{ .Values.ratelimit.env.REDIS_SOCKET_TYPE }}
+        - name: REDIS_URL
+          value: {{ .Values.ratelimit.env.REDIS_URL }}
+        - name: USE_STATSD
+          value: "{{ .Values.ratelimit.env.USE_STATSD }}"
+        - name: RUNTIME_ROOT
+          value: {{ .Values.ratelimit.env.RUNTIME_ROOT }}
+        - name: RUNTIME_SUBDIRECTORY
+          value: {{ .Values.ratelimit.env.RUNTIME_SUBDIRECTORY }}
+        - name: RUNTIME_WATCH_ROOT
+          value: "{{ .Values.ratelimit.env.RUNTIME_WATCH_ROOT }}"
+        - name: RUNTIME_IGNOREDOTFILES
+          value: "{{ .Values.ratelimit.env.RUNTIME_IGNOREDOTFILES }}"
+        - name: HOST
+          value: "{{ .Values.ratelimit.env.HOST }}"
+        - name: GRPC_HOST
+          value: "{{ .Values.ratelimit.env.GRPC_HOST }}"
+        ports:
+        - containerPort: {{ .Values.ratelimit.service.httpPort }}
+        - containerPort: {{ .Values.ratelimit.service.grpcPort }}
+        - containerPort: {{ .Values.ratelimit.service.debugPort }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /data/ratelimit/config
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ .Values.ratelimit.config.configMapName }}
