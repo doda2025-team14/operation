@@ -277,9 +277,7 @@ LINK
 TEXT
 
 ### Conall
-LINK
-
-TEXT
+N/A
 
 ### Wilhelm
 - https://github.com/doda2025-team14/operation/pull/122
@@ -318,7 +316,10 @@ LINK
 TEXT
 
 ### Conall
-LINK
+- https://github.com/doda2025-team14/operation/pull/131
+- https://github.com/doda2025-team14/operation/pull/129
+
+Added relevant visuals to documentation as per A4. Created the decision process for the continuous experimentation section of A4.
 
 TEXT
 
