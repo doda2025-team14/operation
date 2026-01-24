@@ -46,6 +46,29 @@ We hypothesise that implementing caching for messages and their predictions will
 - Prediction latency (ms): The average time taken for receiving a request to sending a response.
 - CPU Usage (%): The average CPU load on the `model-service` pods.
 
+The results were generated using the `testing/loadtest.py` script. We ran three trials, each trial sent 10,000 sms prediction requests, sampled at random from `testing/SMSSpamCollection`, using three workers.
+
+During the first trial (`v1-only.png`), requests were only sent to v1 (`url1` in `loadtest.py` was modified to `team14.local/sms`):
+```bash
+python3 loadtest.py -c 10000 -w 3 --skip-canary
+```
+
+![v1-only](../testing/results/v1-only.png)
+
+During the second trial (`v2-only.png`), requests were only sent to v2:
+```bash
+python3 loadtest.py -c 10000 -w 3 --skip-istio
+```
+
+![v2-only](../testing/results/v2-only.png)
+
+During the third trial (`v1-and-v2`), requests were sent to both v1 and v2 using a 50/50 traffic distribution ratio:
+```bash
+python3 loadtest.py -c 10000 -w 3
+```
+
+![v1-and-v2](../testing/results/v1-and-v2.png)
+
 ## Decision Process
 
 A simple set of one-sided hypothesis tests will be preformed on the data gathered from our two metrics. We will assess these hypotheses to a 95% degree of confidence (2 standard deviations above the mean). As $$n > 30$$ for all tests we can assume our data to have a normal/Gaussian distribution as per the CLT.
@@ -59,3 +82,5 @@ The Null and Alternate Hypotheses for the CPU claims are:
 
 $$H_0: \mu_{cached} >  \mu_{original}$$
 $$H_A: \mu_{cached} \leq \mu_{original}$$
+
+We do not apply this decision process to the results we have because the method used to generate these results is intended as a proof of concept. We recognise that these results would be vastly different if we would have actually ran this experiment in a production setting, with real users interacting with the system over a prolonged timeframe. Consequently, any deployment decision based on these simulated results would be premature; production A/B testing with real traffic patterns is necessary for meaningful evaluation.
