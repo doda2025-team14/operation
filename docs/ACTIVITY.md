@@ -268,6 +268,7 @@ Added multi-architecture builds to the release flow of app.
 
 ### Boris
 - https://github.com/doda2025-team14/operation/pull/113
+- https://github.com/doda2025-team14/operation/pull/132
 
 Finished working on improving the routing and started with fixing the prometheus connection to the other services and adding the metrics of the experimental version to the grafana.
 
@@ -310,7 +311,12 @@ Added self-signed TLS certificates to the NGINX ingress.
 ## Week 9
 
 ### Boris
+- https://github.com/doda2025-team14/operation/pull/132
+- https://github.com/doda2025-team14/model-service/pull/27
+- https://github.com/doda2025-team14/model-service/pull/26
+- https://github.com/doda2025-team14/app/pull/26
 
+Added metrics for the experiment to the model-service and wired them to Grafana. Changed the behaviour of how new container images are tagged.
 
 ### Elvira
 LINK
