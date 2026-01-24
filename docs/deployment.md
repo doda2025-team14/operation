@@ -19,7 +19,7 @@ This document details the architectural topology, traffic routing strategies, an
       - [Sticky Sessions](#sticky-sessions)
       - [Version Consistency](#version-consistency)
       - [VirtualService Routing Logic](#virtualservice-routing-logic)
-  - [4. Additional Use Case: Rate Limiting](#4-additional-use-case)
+  - [4. Additional Use Case: Rate Limiting](#4-additional-use-case-rate-limiting)
   - [5. Kubernetes Resources](#5-kubernetes-resources)
     - [Resource Relationships](#resource-relationships)
     - [Pod Labeling Strategy](#pod-labeling-strategy)
@@ -323,7 +323,7 @@ sequenceDiagram
     RateLimit->>Redis: Get Counter<br/>Key: "ratelimit:PATH=/sms/:USER=Alice"
     Redis-->>RateLimit: Current Count: 10
     
-    alt Under Limit (< 10 req/min)
+    alt Under Limit (<= 10 req/min)
         RateLimit-->>Gateway: OK (Allow)
         Note over Gateway: Request Allowed
         Gateway->>App: Forward Request
@@ -473,7 +473,7 @@ The app service exposes Prometheus metrics at the `/metrics` endpoint, such as:
 - **Gauges:** Active connections, current resource usage
 - **Histograms:** Request latency distributions with configurable buckets, response times to model service
 
-Model service exposes a `cache` metric only in the v2 canary version, this is useful for experiment monitoring. Model service performance is also observable indirectly through the app's metrics tracking downstream /predict calls.
+Model service exposes a `cache` metric only in the v2 canary version, this is useful for experiment monitoring. Model service performance is also observable indirectly through the app's metrics tracking downstream `/predict` calls.
 
 ### Dashboards
 
@@ -481,7 +481,17 @@ Two dashboards are automatically provisioned via ConfigMap sidecar:
 
 1. **App Dashboard** ([`dashboards/app-dashboard.json`](../chart/dashboards/app-dashboard.json)): General health metrics including ham/spam probability distribution, prediction latency histograms, and request throughput.
 
-2. **Experiment Dashboard**: Experiment visualization is yet to be created.
+2. **Experiment Dashboard**([`dashboards/a4-dashboard.json`](../chart/dashboards/a4-dashboard.json)):  Metrics for average request latency, CPU usage, memory usage, cache hit rate.
+
+These dashboards are automatically installed by the central Helm chart when the application is deployed. To access them and view the metrics in real time:
+1. Port forward the dashboard to the localhost using:
+```bash
+kubectl port-forward svc/<RELEASE_NAME>-grafana 3000:80
+```
+2. Go to localhost:3000
+3. Login using username: `admin` and password: `42`
+4. In the left sidebar, click `Dashboards` and look for `App` and `A4`
+5. Interact with the application to generate data
 
 ---
 
