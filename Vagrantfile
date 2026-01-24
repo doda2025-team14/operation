@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 require "fileutils"
 
-NUM_WORKERS = 2
+NUM_WORKERS = 1
 BASE_IP = 200
 INVENTORY_FILE = "inventory.cfg"
 SHARED_DIR = "./shared" # local shared dir
