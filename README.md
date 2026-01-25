@@ -186,7 +186,7 @@ flowchart TD
     K -- No --> L[Skip deploy]
     K -- Yes --> Q
 
-   Q[Deploy with Maven<br/>mvn deploy]
+   Q[Deploy with Maven]
 ```
 *Figure 2: Lib-Version Release Workflow*
 ### Run using Docker containers
