@@ -348,3 +348,7 @@ Added deployment documentation.
 - https://github.com/doda2025-team14/operation/pull/134
 
 Fixed hardcoded release names in helm, documentation and setup scripts.
+
+- https://github.com/doda2025-team14/operation/pull/141
+
+Removed unnecessary files.
