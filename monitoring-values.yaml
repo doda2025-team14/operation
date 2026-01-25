@@ -1,7 +1,0 @@
-grafana:
-  adminUser: admin
-  adminPassword: "42"
-  sidecar:
-    dashboards:
-      enabled: true
-      searchNamespace: team14
