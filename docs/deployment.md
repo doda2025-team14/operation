@@ -546,7 +546,7 @@ Then navigate to `http://localhost:3000`.
 | `/metrics` | GET | Prometheus metrics | App |
 | `/predict` | POST | ML classification (internal only) | Model Service |
 | `/version` | GET | Returns model service version | Model Service |
-| `/cache`   | GET | Cache statistics  | Model Service (only v2) |
+| `/metrics`   | GET | Resource & Cache statistics  | Model Service |
 
 ### Configuration Management
 
