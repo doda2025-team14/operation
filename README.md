@@ -6,7 +6,7 @@ This repository contains coursework for the [DevOps for Distributed Apps (CS4295
 
 ## Organization and Repositories
 
-You are currently in the `operation` repository which acts as a central hub from which we can deploy, orchestrate, and monitor the application. Beyond this, we have three other repositories in our organization:
+You are currently in the [`operation`](https://github.com/doda2025-team14/operation) repository which acts as a central hub from which we can deploy, orchestrate, and monitor the application. Beyond this, we have three other repositories in our organization:
 
 - [`app`](https://github.com/doda2025-team14/app): Hosts the web application frontend (JavaScript) and backend REST API (Spring Boot) that connects users to the `model-service`.
 - [`model-service`](https://github.com/doda2025-team14/model-service): Provides the machine learning model (Python) and serves predictions to `app` via a REST API.
