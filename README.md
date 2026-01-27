@@ -139,7 +139,7 @@ We use Ansible playbooks to configure the VM software:
 
 ## Deploying and Running the Application
 
-We provide pre-built images which you can use to run the application. The available images, along with other packages, are published to [GitHub Packages](https://github.com/orgs/doda2025-team14/packages). The workflows of these releases are shown in the *figures* below. The application can be run either through Docker containers or using Kubernetes.
+We provide pre-built images which you can use to run the application. The available images, along with other packages, are published to [GitHub Packages](https://github.com/orgs/doda2025-team14/packages). The workflows of these releases are shown in the *figures* below. The app and model-service releases operate identically while lib-version supports releases and pre-releases. The application can be run either through Docker containers or using Kubernetes. 
 
 ### Image Release Workflows
 ```mermaid
@@ -159,40 +159,37 @@ flowchart TD
     C -->D[Read Current Version <br>from pom.xml]
     D --> E[Increment Patch Version <br> MAJOR.MINOR.PATCH <br>]
     E --> F[Update pom.xml <br>Set new version]
-    F --> G[Login to GHCR <br>Using GITHUB_TOKEN]
-    G --> H[Build Docker Image]
+    F --> H[Build and Push Docker Image]
 
     %% Push Images
-    H --> J[Push Docker Images]
-    J --> J1[Push 'MAJOR.MINOR.PATCH' <br> tag]
-    J --> J2[Push 'latest' tag]
+    H --> H1[Push 'MAJOR.MINOR.PATCH' <br> tag]
+    H --> H2[Push 'latest' tag]
 ```
-*Figure 1: Frontend Release Workflow*
+*Figure 1: Frontend/Model-Service Release Workflow*
 
 ```mermaid
 flowchart TD
-    %% Workflow Trigger Region
-    subgraph TRIGGERS [Workflow Triggers]
-        TM[Push to master<br/>or pr/**] 
-        TP[Pull Request events<br/>opened, synchronized, reopened] 
-        TD[Manual Dispatch<br/>workflow_dispatch] 
-    end
+    A[Push event]
+    A --> D[Read current version<br/>from pom.xml]
 
-    %% Connect triggers to the job
-    TM --> C[Start Backend Docker Release]
-    TP --> C
-    TD --> C
+    D --> E{Is version SNAPSHOT?}
+    E -- Yes --> F[Skip release]
+    E -- No --> G[Checkout previous commit<br/>HEAD -1]
 
-    %% Job steps
+    G --> H{Previous commit?}
+    H -- No --> I[First commit<br/>Treat as version change]
+    H -- Yes --> J[Read previous version<br/>from pom.xml]
 
-    C --> D[Checkout Frontend Repo]
-    D --> E[Extract Version<br/>Set VERSION environment variable]
-    E --> F[Set up QEMU<br/>Docker emulator]
-    F --> G[Set up Docker Buildx<br/> w/Multi-arch build support]
-    G --> H[Login to GHCR]
-    H --> I[Build and Push Multi-arch Docker Image<br/>Tags VERSION and latest]
+    I --> K{Current != Previous?}
+    J --> K{Current != Previous?}
+
+    K -- No --> L[Skip deploy]
+    K -- Yes --> Q
+
+   Q[Deploy with Maven]
 ```
-*Figure 2: Backend Release Workflow*
+*Figure 2: Lib-Version Release Workflow*
+
 ### Run using Docker containers
 
 #### Prerequisites
