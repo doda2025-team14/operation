@@ -139,7 +139,7 @@ We use Ansible playbooks to configure the VM software:
 
 ## Deploying and Running the Application
 
-We provide pre-built images which you can use to run the application. The available images, along with other packages, are published to [GitHub Packages](https://github.com/orgs/doda2025-team14/packages). The workflows of these releases are shown in the *figures* below. The app and model-service releases operate identically while lib-service supports releases and pre-releases. The application can be run either through Docker containers or using Kubernetes. 
+We provide pre-built images which you can use to run the application. The available images, along with other packages, are published to [GitHub Packages](https://github.com/orgs/doda2025-team14/packages). The workflows of these releases are shown in the *figures* below. The app and model-service releases operate identically while lib-version supports releases and pre-releases. The application can be run either through Docker containers or using Kubernetes. 
 
 ### Image Release Workflows
 ```mermaid
