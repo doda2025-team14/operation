@@ -337,10 +337,10 @@ TEXT
 Fixed bug involving ingress incorrectly routing traffic to canary deployment, added screenshots of visualisation to `continuous-experimentation.md`, worked on slides for the final presentation.
 
 ### Jeffrey
-LINK
+- https://github.com/doda2025-team14/operation/pull/130
+- https://github.com/doda2025-team14/operation/pull/140
 
-TEXT
-
+Altered rate limmiting from global to per user. Changed the slides for final presentation
 ### Alessandro
 - https://github.com/doda2025-team14/operation/pull/126
 
