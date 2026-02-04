@@ -353,3 +353,10 @@ Fixed hardcoded release names in helm, documentation and setup scripts.
 - https://github.com/doda2025-team14/operation/pull/141
 
 Removed unnecessary files.
+
+## Week 10
+
+### Boris
+- https://github.com/doda2025-team14/operation/pull/144
+
+Fixed a small error in the deployment docs.
